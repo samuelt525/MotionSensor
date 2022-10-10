@@ -34,10 +34,14 @@ def rescale_frame(frame, percent=75):
 
 # getting video and then processing it and saving in filename_ouput.mp4
 cap = cv2.VideoCapture(str(sys.argv[1]))
+
 width  = (cap.get(3) * int(sys.argv[2]))/ 100
 height = (cap.get(4) * int(sys.argv[2]))/ 100
+
 # fourcc = cv2.VideoWriter_fourcc(*"MJPG")
-out_video = cv2.VideoWriter(t[0]+'_compressed.mp4',0x7634706d, 20.0, (int(width), int(height)),True)
+
+out_video = cv2.VideoWriter(t[0]+'_compressed'+sys.argv[2]+'.mp4',0x7634706d, 20.0, (int(width), int(height)),True)
+
 while(cap.isOpened()):
         ret, frame = cap.read()
         if ret:
@@ -47,5 +51,6 @@ while(cap.isOpened()):
                 break
         else:
             break
+
 cap.release()
 cv2.destroyAllWindows()
