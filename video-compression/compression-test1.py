@@ -1,5 +1,4 @@
 #!/usr/bin/python3
-# coding: utf8
 
 import cv2
 import sys
@@ -38,19 +37,30 @@ cap = cv2.VideoCapture(str(sys.argv[1]))
 width  = (cap.get(3) * int(sys.argv[2]))/ 100
 height = (cap.get(4) * int(sys.argv[2]))/ 100
 
+total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
+
+print(total_frames)
+
 # fourcc = cv2.VideoWriter_fourcc(*"MJPG")
 
-out_video = cv2.VideoWriter(t[0]+'_compressed'+sys.argv[2]+'.mp4',0x7634706d, 20.0, (int(width), int(height)),True)
+out_video = cv2.VideoWriter(t[0]+'_compressed_'+sys.argv[2]+'.mp4',0x7634706d, 20.0, (int(width), int(height)),True)
+
+frame_counter = 1
 
 while(cap.isOpened()):
-        ret, frame = cap.read()
-        if ret:
-            frameX = rescale_frame(frame,int(sys.argv[2]))
-            out_video.write(frameX) 
-            if cv2.waitKey(1) & 0xFF == ord('q'):
-                break
-        else:
+
+    if frame_counter % 30 == 0:
+        print(str(frame_counter) + '/' + str(total_frames))
+    frame_counter += 1
+
+    ret, frame = cap.read()
+    if ret:
+        frameX = rescale_frame(frame,int(sys.argv[2]))
+        out_video.write(frameX) 
+        if cv2.waitKey(1) & 0xFF == ord('q'):
             break
+    else:
+        break
 
 cap.release()
 cv2.destroyAllWindows()
