@@ -3,7 +3,8 @@
 import cv2
 import sys
 import os
-
+from alive_progress import alive_bar
+import time
 
 ## USAGE
 # python compression-test1.py input_filename.mp4 int<rescale_ratio> int<output_fps>
@@ -42,35 +43,38 @@ height = (cap.get(4) * int(sys.argv[2]))/ 100
 
 total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
 
-print(total_frames)
+print('Total Frames: ' + str(total_frames) + ', Original Resolution: ' + str(int(cap.get(3))
+                                                                                     ) + 'x' + str(int(cap.get(4))) + ', Scaled Resolution: ' + str(int(width)) + 'x' + str(int(height)))
 
 # fourcc = cv2.VideoWriter_fourcc(*"MJPG")
 
 out_video = cv2.VideoWriter(t[0]+'_rescale'+sys.argv[2]+'_fps'+sys.argv[3]+'.mp4',0x7634706d, float(sys.argv[3]), (int(width), int(height)),True)
 
-frame_counter = 1
+frame_counter = 0
 
-while(cap.isOpened()):
+with alive_bar(total_frames + 1) as bar:
+    while(cap.isOpened()):
 
-    if frame_counter % 60 == 0:
-        print(str(frame_counter) + '/' + str(total_frames))
-    frame_counter += 1
+        # if frame_counter % 60 == 0:
+        #     print(str(frame_counter) + '/' + str(total_frames))
+        frame_counter += 1
+        bar()
 
-    ret, frame = cap.read()
+        ret, frame = cap.read()
 
-    if ret:
-        if frame_counter % float(sys.argv[3]) == 0:
-            print('here')
-            # Prepare image; rescale, grayscale and blur
-            prepared_frame = cv2.cvtColor(frame, cv2.COLOR_RGB2GRAY)
-            prepared_frame = rescale_frame(frame, int(sys.argv[2]))
-            prepared_frame = cv2.GaussianBlur(src=prepared_frame, ksize=(5,5), sigmaX=0)
-            out_video.write(prepared_frame)
+        if ret:
+            if frame_counter % float(sys.argv[3]) == 0:
+                # print('here')
+                # Prepare image; rescale, grayscale and blur
+                prepared_frame = cv2.cvtColor(frame, cv2.COLOR_RGB2GRAY)
+                prepared_frame = rescale_frame(frame, int(sys.argv[2]))
+                prepared_frame = cv2.GaussianBlur(src=prepared_frame, ksize=(5,5), sigmaX=0)
+                out_video.write(prepared_frame)
 
-        if cv2.waitKey(1) & 0xFF == ord('q'):
+            if cv2.waitKey(1) & 0xFF == ord('q'):
+                break
+        else:
             break
-    else:
-        break
 
 cap.release()
 cv2.destroyAllWindows()
