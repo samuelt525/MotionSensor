@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import UploadVideo from './UploadVideo'
 
 function App() {
 
@@ -25,6 +26,7 @@ function App() {
           ))
         )
       }
+      <UploadVideo />
     </div>
   )
 }
