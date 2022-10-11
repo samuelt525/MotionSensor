@@ -4,25 +4,22 @@ function UploadVideo() {
     const [file, setFile] = useState();
 
     const changeHandler = (event) => {
-        setFile(event.target.files[0]);
+        const fileValue = event.target.files[0]
+        if (fileValue == null){
+            return
+        }
+
+        const data = new FormData();
+        data.append('file', fileValue)
+        setFile(data);
     };
 
     const handleSubmission = () => {
         //cannot jsonstringify file object
-
-        const body = {
-            'lastModified': file.lastModified,
-            'lastModifiedDate': file.lastModifiedDate,
-            'name': file.name,
-            'size': file.size,
-            'type': file.type
-        }
+        if (file == null) return
         fetch("/backend", {
             method: "POST",
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(body)
+            body: file
         }).then((response) => response.json())
             .then((data) => console.log(data))
     };
