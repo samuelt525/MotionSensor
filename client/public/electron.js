@@ -1,7 +1,9 @@
-const path = require('path');
 
+const path = require('path');
+const os = require('os')
 const { app, BrowserWindow } = require('electron');
 const isDev = require('electron-is-dev');
+const { ChildProcess } = require('child_process');
 
 function createWindow() {
   // Create the browser window.
@@ -17,7 +19,7 @@ function createWindow() {
   // win.loadFile("index.html");
   win.loadURL(
     isDev
-      ? 'http://localhost:3000'
+      ? 'http://localhost:3000/'
       : `file://${path.join(__dirname, '../build/index.html')}`
   );
   // Open the DevTools.
@@ -31,22 +33,27 @@ function createWindow() {
   // Also change the path to the Flask script as necessary.
   // Also yes I know this is scuffed as fuck.
   // ------------------------------------------------------------------------
-  // var python = require('child_process').spawn('py', ['../../server/server.py']);
-  // python.stdout.on('data', function (data) {
-  //   console.log("data: ", data.toString('utf8'));
-  // });
-  // python.stderr.on('data', (data) => {
-  //   console.log(`stderr: ${data}`); // when error
-  // });
+  var python = os.platform() == 'darwin' ? require('child_process').spawn('python3', ['../server/server.py']) 
+  : require('child_process').spawn('py', ['../server/server.py'])
+  
+  python.stdout.on('data', function (data) {
+    console.log("data: ", data.toString('utf8'));
+  });
+  python.stderr.on('data', (data) => {
+    console.log(`stderr: ${data}`); // when error
+  });
 
   // These lines of code are used once we are ready for a full build and
-  // have created an executable file using pyinstaller. Comment this out
+  // have created an executable file using pyinstaller. Comment this outx
   // if we're developing/testing and then uncomment the previous code block.
   // Also change the path to the executable as necessary.
   // ------------------------------------------------------------------------
   // let backend;
-  // backend = path.join(process.cwd(), 'resources/backend/dist/app.exe')
-  // var execfile = require(‘child_process’).execFile; execfile(
+
+  // backend = os.platform == 'darwin' ? path.join(process.cwd(), 'resources/backend/dist/server')
+  //  : path.join(process.cwd(), 'recourses/backend/dist/server.exe') 
+
+  // var execfile = require('child_process').execFile; execfile(
   //   backend,
   //   {
   //     windowsHide: true,
@@ -60,16 +67,19 @@ function createWindow() {
   //     }
   //   }
   // )
-  // To kill the Flask executable process when exiting the Electron app
-  // const { exec } = require(‘child_process’);
-  // exec(‘taskkill / f / t / im app.exe’, (err, stdout, stderr) => {
-  //   if (err) {
-  //     console.log(err)
-  //     return;
-  //   }
-  //   console.log(`stdout: ${stdout}`);
-  //   console.log(`stderr: ${stderr}`);
-  // });
+  // //To kill the Flask executable process when exiting the Electron app
+  // const { exec } = require('child_process');
+  // var command
+  //   command = os.platform == 'darwin' ? 'taskkill / f / t / im server' : 'taskkill / f / t / im server.exe'
+  //   exec(command, (err, stdout, stderr) => {
+  //     if (err) {
+  //       console.log(err)
+  //       return;
+  //     }
+  //     console.log(`stdout: ${stdout}`);
+  //     console.log(`stderr: ${stderr}`);
+  //   });
+
 }
 
 // This method will be called when Electron has finished
