@@ -4,6 +4,7 @@ from flask_cors import CORS
 from io import BytesIO
 import os
 import pathlib
+import time
 
 app = Flask(__name__)
 CORS(app, resources={r'/api/*': {'origins': '*'}})
@@ -18,15 +19,9 @@ def members():
 def testingFile():
 	d = {}
 	try:
-		file = request.files['file']
-		filename = file.filename
-		print(f"Uploading file {filename}")
-		print(file)
-		file.save(filename)
-		# file_bytes = file.read()
-		# file_content = BytesIO(file_bytes).readlines()
+		body = request.json
 		d['status'] = 1
-		processedVideo = processVideo(file)
+		processedVideo = processVideo(body['path'], body['fileName'])
 		d['filePath'] = processedVideo
 	
 	except Exception as e:
@@ -36,12 +31,12 @@ def testingFile():
 	return jsonify(d)
 
 
-def processVideo(file):
+def processVideo(ogPath, fileName):
 	# Eventually this should return a string containing the file path to the processed video
 	# For now this just returns the path to the uploaded video
 	path = str(pathlib.Path(__file__).parent.resolve())
 	print(path)
-	return path + '\\' + file.filename
+	return path + '\\' + fileName
 
 if __name__ == "__main__":
 	port = int(os.environ.get('PORT', 5000))

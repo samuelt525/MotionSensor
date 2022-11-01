@@ -16,11 +16,13 @@ function UploadVideo() {
     };
 
     const handleSubmission = () => {
-        //cannot jsonstringify file object
         if (file == null) return
         fetch("/backend", {
             method: "POST",
-            body: file
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({'path': file.get('file').path, 'fileName': file.get('file').name})
         }).then((response) => response.json())
             .then((data) => {
                 console.log(data)
