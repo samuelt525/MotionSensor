@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 
 function UploadVideo() {
     const [file, setFile] = useState();
+    const {shell} = window.require('electron');
 
     const changeHandler = (event) => {
         const fileValue = event.target.files[0]
@@ -21,7 +22,12 @@ function UploadVideo() {
             method: "POST",
             body: file
         }).then((response) => response.json())
-            .then((data) => console.log(data))
+            .then((data) => {
+                console.log(data)
+                if(data.status == '1') {
+                    shell.showItemInFolder(data.filePath);
+                }
+            })
     };
     return (
         <>
