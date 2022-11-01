@@ -1,8 +1,10 @@
-from crypt import methods
-from flask import Flask, request, jsonify
+# from crypt import methods
+from flask import Flask, request, jsonify, Response
 from flask_cors import CORS
 from io import BytesIO
 import os
+import pathlib
+import time
 
 app = Flask(__name__)
 CORS(app, resources={r'/api/*': {'origins': '*'}})
@@ -17,21 +19,26 @@ def members():
 def testingFile():
 	d = {}
 	try:
-		file = request.files['file']
-		filename = file.filename
-		print(f"Uploading file {filename}")
-		print(file)
-		file_bytes = file.read()
-		file_content = BytesIO(file_bytes).readlines()
+		body = request.json
 		d['status'] = 1
+		processedVideo = processVideo(body['path'], body['fileName'])
+		d['filePath'] = processedVideo
 	
 	except Exception as e:
 		print("Couldn't upload file", e)
 		d['status'] = 0
+	
 	return jsonify(d)
 
 
+def processVideo(ogPath, fileName):
+	# Eventually this should return a string containing the file path to the processed video
+	# For now this just returns the path to the uploaded video
+	path = str(pathlib.Path(__file__).parent.resolve())
+	print(path)
+	return path + '\\' + fileName
+
 if __name__ == "__main__":
 	port = int(os.environ.get('PORT', 5000))
-	app.run(debug=True, host='0.0.0.0', port=port)
+	app.run(debug=True, host='0.0.0.0', port=port, threaded=True)
 	# app.run(debug=True)
