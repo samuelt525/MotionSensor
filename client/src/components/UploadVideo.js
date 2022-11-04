@@ -17,6 +17,7 @@ function UploadVideo() {
 
     const handleSubmission = () => {
         if (file == null) return
+        console.log("worked")
         fetch("/backend", {
             method: "POST",
             headers: {
@@ -30,9 +31,13 @@ function UploadVideo() {
                     shell.showItemInFolder(data.filePath);
                 }
             })
-    };
+    }; 
     return (
         <>
+            <div>
+                <label for="number">Range of Compression</label>
+                <input type="number" id="number" min="1" max="99"/>
+            </div>
             <div>
                 <input type="file" name="file" onChange={changeHandler} accept=".mp4,.avi,.mov,.mkv,.wmv,.avchd" />
                 <div>

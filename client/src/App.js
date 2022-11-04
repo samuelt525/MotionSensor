@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
-import UploadVideo from './UploadVideo'
+import UploadVideo from './components/UploadVideo'
+import './styles/App.css'
 
 function App() {
 
@@ -17,7 +18,10 @@ function App() {
   }, [])
   return (
     <div>
-      {
+      <h1 className="Title"> Race Walking AI </h1>
+
+      <h3> Choose a video to trim</h3>
+      {/* {
         (typeof data.test === 'undefined') ? (
           <p> Loading ... </p>
         ) :
@@ -25,7 +29,7 @@ function App() {
             <p key={i}>{tes}</p>
           ))
         )
-      }
+      } */}
       <UploadVideo />
     </div>
   )
