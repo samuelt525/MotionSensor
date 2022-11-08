@@ -51,7 +51,7 @@ def compression_test(argv):
 
     # fourcc = cv2.VideoWriter_fourcc(*"MJPG")
 
-    out_video = cv2.VideoWriter(t[0]+'_rescale'+argv[2]+'_fps'+argv[3]+'.mp4',0x7634706d, float(argv[3]), (int(width), int(height)),True)
+    out_video = cv2.VideoWriter(t[0]+'_rescale' + argv[2] + '_fps_' + argv[3] + str(time.time()) + '.mp4', 0x7634706d, float(argv[3]), (int(width), int(height)), True)
 
     frame_counter = 0
 
