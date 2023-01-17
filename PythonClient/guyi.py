@@ -43,10 +43,8 @@ class MainWindow(QWidget):
         print(self.filename)
         if not self.filename == '':
             if self.rescaleRatio.text() == '':
-                print('hello?')
                 self.rescaleRatio.setText('50')
             if self.outputfps.text() == '':
-                print('hello2?')
                 self.outputfps.setText('50')
             self.path.setText(self.filename[0].fileName())
             player = self.view.rootObject().findChild(QMediaPlayer, "player")
