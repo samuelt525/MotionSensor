@@ -6,6 +6,7 @@ from PyQt6.QtQml import QQmlApplicationEngine
 from PyQt6.QtQuickWidgets import QQuickWidget
 from PyQt6.QtWidgets import QApplication, QMainWindow, QPushButton, QFileDialog,QLineEdit,QFormLayout,QWidget
 import subprocess
+import platform
 
 class MainWindow(QWidget):
     def __init__(self):
@@ -39,10 +40,13 @@ class MainWindow(QWidget):
 
     def getfile(self):
         self.filename = QFileDialog.getOpenFileUrl(self, 'Open file')
+        print(self.filename)
         if not self.filename == '':
             if self.rescaleRatio.text() == '':
-                self.outputfps.setText('50')
+                print('hello?')
+                self.rescaleRatio.setText('50')
             if self.outputfps.text() == '':
+                print('hello2?')
                 self.outputfps.setText('50')
             self.path.setText(self.filename[0].fileName())
             player = self.view.rootObject().findChild(QMediaPlayer, "player")
@@ -51,7 +55,10 @@ class MainWindow(QWidget):
 
 
     def processVideo(self):
-        subprocess.Popen(['python3', '../video-compression/compression-test1.py', self.filename[0].path(), self.rescaleRatio.text(), self.outputfps.text()], env=os.environ)
+        filePath = self.filename[0].path()
+        if(platform.system() == 'Windows'):
+            filePath = self.filename[0].path()[1::]
+        subprocess.Popen([sys.executable, '../video-compression/compression-test1.py', filePath, self.rescaleRatio.text(), self.outputfps.text()], env=os.environ)
 app = QApplication(sys.argv)
 window = MainWindow()
 window.show()
