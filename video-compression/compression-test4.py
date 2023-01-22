@@ -1,6 +1,5 @@
 from scenedetect import SceneManager, open_video, ContentDetector, split_video_ffmpeg
 import sys
-import csv
 
 def find_scenes(videoPath, threshold=10, frameSkip=0, showProgress=True):
     video = open_video(videoPath)
@@ -28,7 +27,7 @@ def find_scenes(videoPath, threshold=10, frameSkip=0, showProgress=True):
 
     # use ffmpeg for splitting video files
     # TODO add func to output to directory and prevent overwrites on multiple runs
-    split_video_ffmpeg(videoPath, sceneList, show_progress=True)
+    # split_video_ffmpeg(videoPath, sceneList, show_progress=True)
 
     return sceneList
 

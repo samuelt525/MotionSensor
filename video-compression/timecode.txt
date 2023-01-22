@@ -1,7 +1,3 @@
-Scene  1: Start 00:00:00.000 / Frame 0, End 00:00:10.011 / Frame 1200
-Scene  2: Start 00:00:10.011 / Frame 1200, End 00:00:20.023 / Frame 2400
-Scene  3: Start 00:00:20.023 / Frame 2400, End 00:00:30.034 / Frame 3600
-Scene  4: Start 00:00:30.034 / Frame 3600, End 00:00:40.045 / Frame 4800
-Scene  5: Start 00:00:40.045 / Frame 4800, End 00:00:50.057 / Frame 6000
-Scene  6: Start 00:00:50.057 / Frame 6000, End 00:01:00.068 / Frame 7200
-Scene  7: Start 00:01:00.068 / Frame 7200, End 00:01:00.694 / Frame 7275
+Scene  1: Start 00:00:00.000 / Frame 0, End 00:00:10.018 / Frame 1201
+Scene  2: Start 00:00:10.018 / Frame 1201, End 00:00:20.028 / Frame 2401
+Scene  3: Start 00:00:20.028 / Frame 2401, End 00:00:23.031 / Frame 2761
