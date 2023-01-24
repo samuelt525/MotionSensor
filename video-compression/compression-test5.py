@@ -33,15 +33,15 @@ while True:
     if not ret:
         break
 
-    # Convert the frame to grayscale
-    gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+    # # Convert the frame to grayscale
+    # gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
 
-    # Apply Gaussian blur to the frame
-    gray = cv2.GaussianBlur(gray, (21, 21), 0)
+    # # Apply Gaussian blur to the frame
+    # gray = cv2.GaussianBlur(gray, (21, 21), 0)
 
     # If this is the first frame, initialize the first frame
     if first_frame is None:
-        first_frame = gray
+        first_frame = frame
         continue
 
     # Calculate the absolute difference between the current frame and the first frame
