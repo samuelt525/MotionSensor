@@ -1,3 +1,0 @@
-Scene  1: Start 00:00:00.000 / Frame 0, End 00:00:10.018 / Frame 1201
-Scene  2: Start 00:00:10.018 / Frame 1201, End 00:00:20.028 / Frame 2401
-Scene  3: Start 00:00:20.028 / Frame 2401, End 00:00:23.031 / Frame 2761
