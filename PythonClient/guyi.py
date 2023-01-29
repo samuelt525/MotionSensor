@@ -40,7 +40,6 @@ class MainWindow(QWidget):
 
     def getfile(self):
         self.filename = QFileDialog.getOpenFileUrl(self, 'Open file')
-        print(self.filename)
         if not self.filename == '':
             if self.rescaleRatio.text() == '':
                 self.rescaleRatio.setText('50')
