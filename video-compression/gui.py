@@ -41,7 +41,7 @@ class MainWindow(QWidget):
         if self.formInitialized:
             return
         self.submissionbutton = QPushButton('Submit')
-        #self.submissionbutton.clicked.connect(self.processVideo)
+        self.submissionbutton.clicked.connect(self.processVideo)
 
 
         frame_width, frame_height, fps  = test6.getVideoBounds(self.filename[0].path())
@@ -67,24 +67,24 @@ class MainWindow(QWidget):
 
 
         self.secondRow.addWidget(QLabel("Height Lower Bound:"))
-        self.y = QSpinBox()
-        self.secondRow.addWidget(self.y)
+        self.userYLB = QSpinBox()
+        self.secondRow.addWidget(self.userYLB)
 
         self.secondRow.addWidget(QLabel("Height Upper Bound:"))
-        self.height = QSpinBox()
-        self.height.setMaximum(frame_height)
-        self.height.setValue(frame_height)
-        self.secondRow.addWidget(self.height)
+        self.userYUB = QSpinBox()
+        self.userYUB.setMaximum(frame_height)
+        self.userYUB.setValue(frame_height)
+        self.secondRow.addWidget(self.userYUB)
 
         self.thirdRow.addWidget(QLabel("Width Lower bound:"))
-        self.x = QSpinBox()
-        self.thirdRow.addWidget(self.x)
+        self.userXLB = QSpinBox()
+        self.thirdRow.addWidget(self.userXLB)
 
         self.thirdRow.addWidget(QLabel("Width Upper Bound:"))
-        self.width = QSpinBox()
-        self.width.setMaximum(frame_width)
-        self.width.setValue(frame_width)
-        self.thirdRow.addWidget(self.width)
+        self.userXUB = QSpinBox()
+        self.userXUB.setMaximum(frame_width)
+        self.userXUB.setValue(frame_width)
+        self.thirdRow.addWidget(self.userXUB)
 
 
 
@@ -96,11 +96,9 @@ class MainWindow(QWidget):
         player.play()
 
         self.Form.addRow(self.submissionbutton)
-
-
-
     def processVideo(self):
-        test6.processVideo()
+        print(self.filename[0].path(), self.outputfps.value(), int(self.rescaleRatio.text()), self.userXLB.value(), self.userXUB.value(), self.userYLB.value(), self.userYUB.value())
+        test6.processVideo(self.filename[0].path(), self.outputfps.value(), int(self.rescaleRatio.text()), self.userXLB.value(), self.userXUB.value(), self.userYLB.value(), self.userYUB.value())
         
 app = QApplication(sys.argv)
 window = MainWindow()
