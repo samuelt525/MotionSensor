@@ -76,7 +76,7 @@ def processVideo(filepath, outputFPS, rescaleRatio, userXLB, userXUB, userYLB, u
     frame_height = int(cap.get(4))
 
     # Create a video writer object
-    fourcc = cv2.VideoWriter_fourcc('*.mp4v')
+    fourcc = cv2.VideoWriter_fourcc(*'mp4v')
     out = cv2.VideoWriter('output.mp4', fourcc, desired_fps,
                         (frame_width, frame_height))
 
@@ -143,6 +143,6 @@ def processVideo(filepath, outputFPS, rescaleRatio, userXLB, userXUB, userYLB, u
     cv2.destroyAllWindows() 
 
 if __name__ == '__main__': 
-    pass
+    processVideo("./C0078_clip1min.mp4", 30, 100, 0, 2160, 0, 3840)
 
     
