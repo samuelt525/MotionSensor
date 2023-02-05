@@ -102,7 +102,8 @@ def processVideo(filepath, outputFPS, rescaleRatio, userXLB, userXUB, userYLB, u
         # print(height, width)
 
         # Extract Region of interest
-        roi = frame[userXLB:userXUB, userYLB: userYUB]
+        print(type(userXLB), type(userXUB), type(userYLB), type(userYUB))
+        roi = frame[userXLB:userXUB, userYLB:userYUB]
 
         # 1. Object Detection
         mask = object_detector.apply(roi)
