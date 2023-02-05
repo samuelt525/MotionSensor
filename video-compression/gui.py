@@ -101,10 +101,10 @@ class MainWindow(QWidget):
         self.Form.addRow(self.thirdRow)
         self.Form.addRow(self.view)
 
-        print(self.view.rootObject().findChild())
-        #player = self.view.rootObject().findChild(QMediaPlayer, "player")
-        #player.setProperty('source', self.filename[0].path())
-        #player.play()
+        #print(self.view.rootObject().findChild())
+        player = self.view.rootObject().findChild(QMediaPlayer, "player")
+        player.setProperty('source', self.filename[0].path())
+        player.play()
 
         self.Form.removeWidget(self.filebutton);
         self.Form.addRow(self.submissionbutton)

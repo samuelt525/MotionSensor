@@ -14,13 +14,6 @@ Item {
         audioOutput:audioOutput
         videoOutput:videoOutput 
     }
-    Rectangle{
-        width: "var"
-        height: "var"
-        color: "#FF3333CC"
-        border.width: 2
-        border.color: "black"
-    }
 
     AudioOutput {
         id:audioOutput
