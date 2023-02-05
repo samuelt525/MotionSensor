@@ -91,13 +91,9 @@ def processVideo(filepath, outputFPS, rescaleRatio, userXLB, userXUB, userYLB, u
         ret, frame = cap.read()
         if not ret:
             break
+        #height, width, _ = frame.shape
 
         # Write the frame to the output video
-        out.write(frame)
-
-    while True:
-        ret, frame = cap.read()
-        #height, width, _ = frame.shape
 
         # print(height, width)
 
@@ -122,6 +118,7 @@ def processVideo(filepath, outputFPS, rescaleRatio, userXLB, userXUB, userYLB, u
 
         # 2. Object Tracking
         boxes_ids = tracker.update(detections)
+        out.write(frame)
         for box_id in boxes_ids:
             x, y, w, h, id = box_id
             cv2.putText(roi, str(id), (x, y - 15),
