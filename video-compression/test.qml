@@ -9,12 +9,21 @@ ApplicationWindow {
     height:400
     title:"Play Videos"
 
+    Rectangle{
+        width: 1200
+        height: 1200
+        color: "red"
+        border.width: 2
+        border.color: "black"
+    }
+
     MediaPlayer {
         id:player
         source:"clip10sec.mp4"
         audioOutput:audioOutput
         videoOutput:videoOutput
     }
+
 
     AudioOutput {
         id:audioOutput

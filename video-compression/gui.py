@@ -4,34 +4,46 @@ import test6
 from PyQt6.QtCore import QSize, Qt, QUrl
 from PyQt6.QtMultimedia import QMediaPlayer
 from PyQt6.QtQuickWidgets import QQuickWidget
-from PyQt6.QtWidgets import QApplication, QPushButton, QFileDialog,QLineEdit,QFormLayout,QWidget, QGroupBox, QHBoxLayout, QLabel, QSpinBox, QSlider
+from PyQt6.QtWidgets import QApplication, QPushButton, QFileDialog,QLineEdit,QFormLayout,QWidget, QWidgetItem, QGroupBox, QHBoxLayout, QLabel, QSpinBox, QSlider
+from PyQt6.QtGui import QPixmap
 import subprocess
 
 
 class MainWindow(QWidget):
     def __init__(self):
         super().__init__()
+        self.width, self.height = 700, 600
+        self.setMinimumSize(self.width, self.height)
+
         self.filename = ''
         self.setWindowTitle("Motion Tracker")
-
         # File
         self.formInitialized = False
         self.filebutton = QPushButton("Select File")
         self.filebutton.clicked.connect(self.getfile)
-        self.Form = QFormLayout()
-
-
+        self.filebutton.setFixedWidth(200)
+        self.h_layout = QHBoxLayout()
+        self.h_layout.addWidget(self.filebutton)
+        self.h_layout.setAlignment(Qt.AlignmentFlag.AlignHCenter | Qt.AlignmentFlag.AlignVCenter)
 
         self.view = QQuickWidget()
         self.view.setSource(QUrl.fromLocalFile('media.qml'))
 
-        self.Form.addRow(self.filebutton)
+        self.Form = QFormLayout()
 
+        self.logo = QLabel()
+        pixmap = QPixmap('Logo.png')
+        self.logo.setPixmap(pixmap)
+        self.Form.addRow(self.logo)
+        self.Form.addRow(self.h_layout)
         self.setLayout(self.Form) 
 
+
+
     def getfile(self):
-        #TODO REMOVE SELECT FILE BTTON
         self.filename = QFileDialog.getOpenFileUrl(self, 'Open file')
+        self.filebutton.hide();
+        self.logo.hide()
         self.initializeForm()
         self.formInitialized = True
 
@@ -40,15 +52,12 @@ class MainWindow(QWidget):
     def initializeForm(self):
         if self.formInitialized:
             return
+
         self.submissionbutton = QPushButton('Submit')
         self.submissionbutton.clicked.connect(self.processVideo)
 
-
         frame_width, frame_height, fps  = test6.getVideoBounds(self.filename[0].path())
 
-        print(frame_width)
-        print(frame_height)
-        print(fps)
         self.rescaleRatio = QLineEdit()
         self.outputfps = QSpinBox()
         self.firstRow = QHBoxLayout()
@@ -91,10 +100,13 @@ class MainWindow(QWidget):
         self.Form.addRow(self.secondRow)
         self.Form.addRow(self.thirdRow)
         self.Form.addRow(self.view)
-        player = self.view.rootObject().findChild(QMediaPlayer, "player")
-        player.setProperty('source', self.filename[0].path())
-        player.play()
 
+        print(self.view.rootObject().findChild())
+        #player = self.view.rootObject().findChild(QMediaPlayer, "player")
+        #player.setProperty('source', self.filename[0].path())
+        #player.play()
+
+        self.Form.removeWidget(self.filebutton);
         self.Form.addRow(self.submissionbutton)
     def processVideo(self):
         print(self.filename[0].path(), self.outputfps.value(), int(self.rescaleRatio.text()), self.userXLB.value(), self.userXUB.value(), self.userYLB.value(), self.userYUB.value())
