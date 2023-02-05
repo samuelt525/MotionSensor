@@ -97,7 +97,7 @@ def processVideo(filepath, outputFPS, rescaleRatio, userXLB, userXUB, userYLB, u
 
     while True:
         ret, frame = cap.read()
-        height, width, _ = frame.shape
+        #height, width, _ = frame.shape
 
         # print(height, width)
 
