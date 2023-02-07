@@ -56,7 +56,7 @@ class MainWindow(QWidget):
         self.submissionbutton = QPushButton('Submit')
         self.submissionbutton.clicked.connect(self.processVideo)
 
-        frame_width, frame_height, fps  = test6.getVideoBounds(self.filename[0].path())
+        frame_width, frame_height, fps  = tracker.getVideoBounds(self.filename[0].path())
 
         self.rescaleRatio = QLineEdit()
         self.outputfps = QSpinBox()

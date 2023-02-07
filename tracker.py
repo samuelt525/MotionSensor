@@ -99,9 +99,10 @@ def processVideo(filepath, progressBar, outputFPS, rescaleRatio, userXLB, userXU
             break
         
         frame_index += 1
-        progressBar.setValue(int(100 * frame_index / total_frames))
-        app.processEvents()
-        print(int(100 * frame_index / total_frames))
+        # progressBar.setValue(int(100 * frame_index / total_frames))
+        # app.processEvents()
+        # print(int(100 * frame_index / total_frames))
+        print(frame_index)
 
         # height, width, _ = frame.shape
 
@@ -149,25 +150,27 @@ def processVideo(filepath, progressBar, outputFPS, rescaleRatio, userXLB, userXU
     cap.release()
     cv2.destroyAllWindows()
 
-class Window(QWidget):
-    def __init__(self):
-        super().__init__()
-        self.resize(320,250)
-        self.setWindowTitle("test")
+# class Window(QWidget):
+#     def __init__(self):
+#         super().__init__()
+#         self.resize(320,250)
+#         self.setWindowTitle("test")
  
-        self.prog_bar = QProgressBar(self)
-        self.prog_bar.setGeometry(50, 50, 250, 30)
+#         self.prog_bar = QProgressBar(self)
+#         self.prog_bar.setGeometry(50, 50, 250, 30)
 
-        button = QPushButton("Start Process", self)
-        button.clicked.connect(self.update)
-        button.move(50,100)
+#         button = QPushButton("Start Process", self)
+#         button.clicked.connect(self.update)
+#         button.move(50,100)
 
-    def update(self):
-        processVideo("./C0078_clip10sec.mp4", self.prog_bar, 30, 100, 0, 2160, 0, 3840)
+#     def update(self):
+#         processVideo("./C0078_clip10sec.mp4", self.prog_bar, 30, 100, 0, 2160, 0, 3840)
 
 
-app = QApplication(sys.argv)
-window = Window()
-window.show()
-sys.exit(app.exec())
+# app = QApplication(sys.argv)
+# window = Window()
+# window.show()
+# sys.exit(app.exec())
 
+if __name__ == '__main__': 
+    processVideo("./C0078_clip10sec.mp4", 0, 30, 100, 0, 2160, 0, 3840)
