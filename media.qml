@@ -12,12 +12,22 @@ Item {
         id:player
         objectName:"player"
         audioOutput:audioOutput
-        videoOutput:videoOutput 
+        videoOutput:videoOutput
     }
 
-    Connections {
-        target: guiParent
-        function onResized() {
+    // automatic resizing with qt window; commented out due to segmentation fault errors on mac
+    // Connections {
+    //     target: guiParent
+    //     function onResized() {
+    //         topview.width = guiParent.getSize().width-25
+    //         topview.height = guiParent.getSize().height-150
+    //     }
+    // }
+
+    MouseArea {
+        id: mouseRegion
+        anchors.fill: parent;
+        onPressed: {
             topview.width = guiParent.getSize().width-25
             topview.height = guiParent.getSize().height-150
         }
@@ -54,23 +64,24 @@ Item {
         enabled:player.seekable
         value:player.duration > 0 ? player.position / player.duration : 0
         onMoved:function() {
-            player.position = player.duration * progressSlider.position
-        }
+        player.position = player.duration * progressSlider.position
     }
+}
 
-    Button {
-        id:playPauseButton
-        text:"Play/Pause"
-        anchors.bottom:parent.bottom
+Button {
+    id:playPauseButton
+    text:"Play/Pause"
+    anchors.bottom:parent.bottom
 
-        onClicked:function() {
-            if(player.playbackState === 1){
-                player.pause()
-            }
-            else {
-                player.play()
-            }
-        }
+    onClicked:function() {
+    if (player.playbackState === 1)
+    {
+        player.pause()
     }
+    else {
+        player.play()
+    }
+}
+}
 
 }
