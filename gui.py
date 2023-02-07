@@ -20,7 +20,7 @@ class MainWindow(QWidget):
         self.formInitialized = False
         self.filebutton = QPushButton("Select File")
         self.filebutton.clicked.connect(self.getfile)
-        self.filebutton.setFixedWidth(200)
+        self.filebutton.setFixedWidth(500)
         self.h_layout = QHBoxLayout()
         self.h_layout.addWidget(self.filebutton)
         self.h_layout.setAlignment(Qt.AlignmentFlag.AlignHCenter | Qt.AlignmentFlag.AlignVCenter)
@@ -33,6 +33,7 @@ class MainWindow(QWidget):
 
         self.logo = QLabel()
         pixmap = QPixmap('Logo.png')
+        pixmap = pixmap.scaled(500,160)
         self.logo.setPixmap(pixmap)
         self.Form.addRow(self.logo)
         self.Form.addRow(self.h_layout)
