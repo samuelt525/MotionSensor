@@ -6,13 +6,21 @@ Item {
     objectName:"topview"
     id:topview
     visible:true
-    width:600
-    height:400
+    width:800
+    height:500
     MediaPlayer {
         id:player
         objectName:"player"
         audioOutput:audioOutput
         videoOutput:videoOutput 
+    }
+
+    Connections {
+        target: guiParent
+        function onResized() {
+            topview.width = guiParent.getSize().width-25
+            topview.height = guiParent.getSize().height-150
+        }
     }
 
     AudioOutput {
@@ -42,10 +50,26 @@ Item {
         id:progressSlider
         width:parent.width
         anchors.bottom:parent.bottom
+        anchors.margins:40
         enabled:player.seekable
         value:player.duration > 0 ? player.position / player.duration : 0
         onMoved:function() {
             player.position = player.duration * progressSlider.position
+        }
+    }
+
+    Button {
+        id:playPauseButton
+        text:"Play/Pause"
+        anchors.bottom:parent.bottom
+
+        onClicked:function() {
+            if(player.playbackState === 1){
+                player.pause()
+            }
+            else {
+                player.play()
+            }
         }
     }
 
