@@ -100,7 +100,7 @@ def processVideo(filepath, progressBar, outputFPS, rescaleRatio, userXLB, userXU
         
         frame_index += 1
         progressBar.setValue(int(100 * frame_index / total_frames))
-        # app.processEvents()
+        app.processEvents()
         # print(int(100 * frame_index / total_frames))
         print(frame_index)
 
@@ -123,7 +123,7 @@ def processVideo(filepath, progressBar, outputFPS, rescaleRatio, userXLB, userXU
         for cnt in contours:
             # Calculate area and remove small elements
             area = cv2.contourArea(cnt)
-            if area > 500:
+            if area > 1000:
                 # cv2.drawContours(roi, [cnt], -1, (0, 255, 0), 2)
                 x, y, w, h = cv2.boundingRect(cnt)
                 detections.append([x, y, w, h])
@@ -136,8 +136,8 @@ def processVideo(filepath, progressBar, outputFPS, rescaleRatio, userXLB, userXU
             cv2.putText(roi, str(detection_id), (x, y - 15), cv2.FONT_HERSHEY_PLAIN, 2, (255, 0, 0), 2)
             cv2.rectangle(roi, (x, y), (x + w, y + h), (0, 255, 0), 3)
 
-        # cv2.imshow("roi", roi)
-        # cv2.imshow("Frame", frame)
+        cv2.imshow("roi", roi)
+        cv2.imshow("Frame", frame)
         # cv2.imshow("Mask", mask)
 
         key = cv2.waitKey(30)
@@ -173,4 +173,6 @@ def processVideo(filepath, progressBar, outputFPS, rescaleRatio, userXLB, userXU
 # sys.exit(app.exec())
 
 if __name__ == '__main__': 
-    processVideo("./C0078_clip10sec.mp4", 0, 30, 100, 0, 2160, 0, 3840)
+    app = QApplication(sys.argv)
+    prog_bar = QProgressBar()
+    processVideo("./C0078_clip10sec.mp4", prog_bar, 30, 100, 0, 2160, 0, 3840)
