@@ -63,8 +63,9 @@ Item {
         anchors.margins:40
         enabled:player.seekable
         value:player.duration > 0 ? player.position / player.duration : 0
-        onMoved:function() {
-        player.position = player.duration * progressSlider.position
+        onMoved: {
+            player.position = player.duration * progressSlider.position
+        }
     }
 
 
@@ -73,13 +74,14 @@ Item {
         text:"Play/Pause"
         anchors.bottom:parent.bottom
 
-        onClicked:function() {
-        if (player.playbackState === 1)
-        {
-            player.pause()
-        }
-        else {
-            player.play()
+        onClicked: {
+            if (player.playbackState === 1)
+            {
+                player.pause()
+            }
+            else {
+                player.play()
+            }
         }
     }
 }
