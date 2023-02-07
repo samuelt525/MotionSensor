@@ -66,22 +66,20 @@ Item {
         onMoved:function() {
         player.position = player.duration * progressSlider.position
     }
-}
 
-Button {
-    id:playPauseButton
-    text:"Play/Pause"
-    anchors.bottom:parent.bottom
 
-    onClicked:function() {
-    if (player.playbackState === 1)
-    {
-        player.pause()
+    Button {
+        id:playPauseButton
+        text:"Play/Pause"
+        anchors.bottom:parent.bottom
+
+        onClicked:function() {
+        if (player.playbackState === 1)
+        {
+            player.pause()
+        }
+        else {
+            player.play()
+        }
     }
-    else {
-        player.play()
-    }
-}
-}
-
 }
