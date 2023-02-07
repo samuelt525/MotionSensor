@@ -10,7 +10,7 @@ from PyQt6.QtGui import QPixmap
 
 class MainWindow(QWidget):
     # for qml video player resizing with window size; commented out due to segmentation fault error on mac
-    resized = pyqtSignal()
+    # resized = pyqtSignal()
     def __init__(self):
         super().__init__()
 
@@ -121,9 +121,9 @@ class MainWindow(QWidget):
     def getSize(self):
         return self.size()
     # resizes qml video player with window; commented out bc segmentation fault on mac
-    def resizeEvent(self, event):
-        self.resized.emit()
-        super(MainWindow, self).resizeEvent(event)
+    # def resizeEvent(self, event):
+    #     self.resized.emit()
+    #     super(MainWindow, self).resizeEvent(event)
 
     def processVideo(self):
         self.rescaleRatio.hide()
