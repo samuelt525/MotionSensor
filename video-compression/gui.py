@@ -1,13 +1,12 @@
 import sys
 import os
-import test6
+import tracker
+import subprocess
 from PyQt6.QtCore import QSize, Qt, QUrl
 from PyQt6.QtMultimedia import QMediaPlayer
 from PyQt6.QtQuickWidgets import QQuickWidget
-from PyQt6.QtWidgets import QApplication, QPushButton, QFileDialog,QLineEdit,QFormLayout,QWidget, QWidgetItem, QGroupBox, QHBoxLayout, QLabel, QSpinBox, QSlider
+from PyQt6.QtWidgets import QApplication, QPushButton, QFileDialog, QLineEdit, QFormLayout, QWidget, QWidgetItem, QGroupBox, QHBoxLayout, QLabel, QSpinBox, QSlider, QProgressBar
 from PyQt6.QtGui import QPixmap
-import subprocess
-
 
 class MainWindow(QWidget):
     def __init__(self):
@@ -38,6 +37,7 @@ class MainWindow(QWidget):
         self.Form.addRow(self.h_layout)
         self.setLayout(self.Form) 
 
+        self.progressBar = QProgressBar()
 
 
     def getfile(self):
@@ -95,8 +95,6 @@ class MainWindow(QWidget):
         self.userXUB.setValue(frame_width)
         self.thirdRow.addWidget(self.userXUB)
 
-
-
         self.Form.addRow(self.secondRow)
         self.Form.addRow(self.thirdRow)
         self.Form.addRow(self.view)
@@ -106,11 +104,12 @@ class MainWindow(QWidget):
         player.setProperty('source', self.filename[0].path())
         player.play()
 
-        self.Form.removeWidget(self.filebutton);
+        self.Form.removeWidget(self.filebutton)
         self.Form.addRow(self.submissionbutton)
+
     def processVideo(self):
         print(self.filename[0].path(), self.outputfps.value(), int(self.rescaleRatio.text()), self.userXLB.value(), self.userXUB.value(), self.userYLB.value(), self.userYUB.value())
-        test6.processVideo(self.filename[0].path(), self.outputfps.value(), int(self.rescaleRatio.text()), self.userXLB.value(), self.userXUB.value(), self.userYLB.value(), self.userYUB.value())
+        tracker.processVideo(self.filename[0].path(), self.progressBar, self.outputfps.value(), int(self.rescaleRatio.text()), self.userXLB.value(), self.userXUB.value(), self.userYLB.value(), self.userYUB.value())
         
 app = QApplication(sys.argv)
 window = MainWindow()
