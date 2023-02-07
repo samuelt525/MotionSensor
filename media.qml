@@ -15,19 +15,9 @@ Item {
         videoOutput:videoOutput
     }
 
-    // automatic resizing with qt window; commented out due to segmentation fault errors on mac
-    // Connections {
-    //     target: guiParent
-    //     function onResized() {
-    //         topview.width = guiParent.getSize().width-25
-    //         topview.height = guiParent.getSize().height-150
-    //     }
-    // }
-
-    MouseArea {
-        id: mouseRegion
-        anchors.fill: parent;
-        onPressed: {
+    Connections {
+        target: guiParent
+        function onResized() {
             topview.width = guiParent.getSize().width-25
             topview.height = guiParent.getSize().height-150
         }
@@ -69,19 +59,19 @@ Item {
     }
 
 
-    Button {
-        id:playPauseButton
-        text:"Play/Pause"
-        anchors.bottom:parent.bottom
+    // Button {
+    //     id:playPauseButton
+    //     text:"Play/Pause"
+    //     anchors.bottom:parent.bottom
 
-        onClicked: {
-            if (player.playbackState === 1)
-            {
-                player.pause()
-            }
-            else {
-                player.play()
-            }
-        }
-    }
+    //     onClicked: {
+    //         if (player.playbackState === 1)
+    //         {
+    //             player.pause()
+    //         }
+    //         else {
+    //             player.play()
+    //         }
+    //     }
+    // }
 }
