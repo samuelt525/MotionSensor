@@ -59,19 +59,19 @@ Item {
     }
 
 
-    // Button {
-    //     id:playPauseButton
-    //     text:"Play/Pause"
-    //     anchors.bottom:parent.bottom
+    Button {
+        id:playPauseButton
+        text:"Play/Pause"
+        anchors.bottom:parent.bottom
 
-    //     onClicked: {
-    //         if (player.playbackState === 1)
-    //         {
-    //             player.pause()
-    //         }
-    //         else {
-    //             player.play()
-    //         }
-    //     }
-    // }
+        onClicked: {
+            if (player.playbackState === 1)
+            {
+                player.pause()
+            }
+            else {
+                player.play()
+            }
+        }
+    }
 }

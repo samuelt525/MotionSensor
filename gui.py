@@ -26,6 +26,8 @@ class MainWindow(QWidget):
         self.h_layout.setAlignment(Qt.AlignmentFlag.AlignHCenter | Qt.AlignmentFlag.AlignVCenter)
 
         self.view = QQuickWidget()
+        self.view.rootContext().setContextProperty("guiParent", self)
+        self.view.setSource(QUrl.fromLocalFile('media.qml'))
 
         self.Form = QFormLayout()
 
@@ -107,8 +109,6 @@ class MainWindow(QWidget):
         self.resize(self.width, self.height)
 
         #print(self.view.rootObject().findChild())
-        self.view.rootContext().setContextProperty("guiParent", self)
-        self.view.setSource(QUrl.fromLocalFile('media.qml'))
         self.player = self.view.rootObject().findChild(QMediaPlayer, "player")
         self.player.setProperty('source', self.filename[0].path())
         self.player.setLoops(self.player.Loops.Infinite)
