@@ -19,7 +19,7 @@ Item {
         target: guiParent
         function onResized() {
             topview.width = guiParent.getSize().width-25
-            topview.height = guiParent.getSize().height-150
+            topview.height = guiParent.getSize().height-175
         }
     }
 

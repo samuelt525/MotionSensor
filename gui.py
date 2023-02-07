@@ -5,7 +5,7 @@ import subprocess
 from PyQt6.QtCore import QSize, Qt, QUrl, pyqtSlot, pyqtSignal
 from PyQt6.QtMultimedia import QMediaPlayer
 from PyQt6.QtQuickWidgets import QQuickWidget
-from PyQt6.QtWidgets import QApplication, QPushButton, QFileDialog, QLineEdit, QFormLayout, QWidget, QWidgetItem, QGroupBox, QHBoxLayout, QLabel, QSpinBox, QSlider, QProgressBar
+from PyQt6.QtWidgets import QApplication, QPushButton, QFileDialog, QLineEdit, QFormLayout, QWidget, QWidgetItem, QGroupBox, QHBoxLayout, QLabel, QSpinBox, QSlider, QProgressBar, QRadioButton
 from PyQt6.QtGui import QPixmap
 
 class MainWindow(QWidget):
@@ -74,6 +74,7 @@ class MainWindow(QWidget):
 
         self.secondRow = QHBoxLayout()
         self.thirdRow = QHBoxLayout()
+        self.fourthRow = QHBoxLayout()
 
 
         self.userYLBLabel = QLabel("Height Lower bound:")
@@ -100,11 +101,24 @@ class MainWindow(QWidget):
         self.userXUB.setValue(frame_width)
         self.thirdRow.addWidget(self.userXUB)
 
+        self.directionLabel = QLabel("Racewalker Direction:")
+        self.fourthRow.addWidget(self.directionLabel)
+        self.directionLeft = QRadioButton("Left")
+        self.fourthRow.addWidget(self.directionLeft)
+        self.directionLeft.setDown(True)
+        self.directionRight = QRadioButton("Right")
+        self.fourthRow.addWidget(self.directionRight)
+        self.directionUp = QRadioButton("Up")
+        self.fourthRow.addWidget(self.directionUp)
+        self.directionDown = QRadioButton("Down")
+        self.fourthRow.addWidget(self.directionDown)
+
         self.Form.addRow(self.secondRow)
         self.Form.addRow(self.thirdRow)
+        self.Form.addRow(self.fourthRow)
         self.Form.addRow(self.view)
 
-        self.width, self.height = 825, 650
+        self.width, self.height = 825, 675
         self.setMinimumSize(self.width, self.height)
         self.resize(self.width, self.height)
 
