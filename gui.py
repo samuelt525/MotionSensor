@@ -37,15 +37,12 @@ class MainWindow(QWidget):
 
         self.progressBar = QProgressBar()
 
-
     def getfile(self):
         self.filename = QFileDialog.getOpenFileUrl(self, 'Open file')
         self.filebutton.hide()
         self.logo.hide()
         self.initializeForm()
         self.formInitialized = True
-
-    
 
     def initializeForm(self):
         if self.formInitialized:
@@ -60,10 +57,12 @@ class MainWindow(QWidget):
         self.outputfps = QSpinBox()
         self.firstRow = QHBoxLayout()
 
-        self.firstRow.addWidget(QLabel("Rescale Ratio: "))
+        self.rescaleRatioLabel = QLabel("Rescale Ratio: ")
+        self.firstRow.addWidget(self.rescaleRatioLabel)
         self.firstRow.addWidget(self.rescaleRatio)
         self.rescaleRatio.setText("100")
-        self.firstRow.addWidget(QLabel("Output FPS:"))
+        self.outputfpsLabel = QLabel("Output FPS:")
+        self.firstRow.addWidget(self.outputfpsLabel)
         self.outputfps.setValue(int(fps))
         self.outputfps.setMaximum(int(fps))
         self.firstRow.addWidget(self.outputfps)
@@ -74,21 +73,25 @@ class MainWindow(QWidget):
         self.thirdRow = QHBoxLayout()
 
 
-        self.secondRow.addWidget(QLabel("Height Lower Bound:"))
+        self.userYLBLabel = QLabel("Height Lower bound:")
+        self.secondRow.addWidget(self.userYLBLabel)
         self.userYLB = QSpinBox()
         self.secondRow.addWidget(self.userYLB)
 
-        self.secondRow.addWidget(QLabel("Height Upper Bound:"))
+        self.userYUBLabel = QLabel("Height Upper Bound:")
+        self.secondRow.addWidget(self.userYUBLabel)
         self.userYUB = QSpinBox()
         self.userYUB.setMaximum(frame_height)
         self.userYUB.setValue(frame_height)
         self.secondRow.addWidget(self.userYUB)
 
-        self.thirdRow.addWidget(QLabel("Width Lower bound:"))
+        self.userXLBLabel = QLabel("Width Lower Bound:")
+        self.thirdRow.addWidget(self.userXLBLabel)
         self.userXLB = QSpinBox()
         self.thirdRow.addWidget(self.userXLB)
 
-        self.thirdRow.addWidget(QLabel("Width Upper Bound:"))
+        self.userXUBLabel = QLabel("Width Upper Bound:")
+        self.thirdRow.addWidget(self.userXUBLabel)
         self.userXUB = QSpinBox()
         self.userXUB.setMaximum(frame_width)
         self.userXUB.setValue(frame_width)
@@ -103,8 +106,6 @@ class MainWindow(QWidget):
         self.resize(self.width, self.height)
 
         #print(self.view.rootObject().findChild())
-        # self.view.rootContext().setContextProperty("windowWidth", int(window.getSize().width()))
-        # self.view.rootContext().setContextProperty("windowHeight", int(window.getSize().height()))
         self.view.rootContext().setContextProperty("guiParent", self)
         self.view.setSource(QUrl.fromLocalFile('media.qml'))
         self.player = self.view.rootObject().findChild(QMediaPlayer, "player")
@@ -123,8 +124,30 @@ class MainWindow(QWidget):
         super(MainWindow, self).resizeEvent(event)
 
     def processVideo(self):
+        self.rescaleRatio.hide()
+        self.rescaleRatioLabel.hide()
+        self.outputfps.hide()
+        self.outputfpsLabel.hide()
+        self.userYLB.hide()
+        self.userYLBLabel.hide()
+        self.userYUB.hide()
+        self.userYUBLabel.hide()
+        self.userXLB.hide()
+        self.userXLBLabel.hide()
+        self.userXUB.hide()
+        self.userXUBLabel.hide()
+        self.view.hide()
+        self.submissionbutton.hide()
+
+        self.progressBar.setGeometry(50, 50, 250, 30)
+        self.firstRow.addWidget(self.progressBar)
+        self.progressLabel = QLabel("Processing video...")
+        self.secondRow.addWidget(self.progressLabel)
+        self.setMinimumSize(825, 100)
+        self.resize(825, 100)
         print(self.filename[0].path(), self.outputfps.value(), int(self.rescaleRatio.text()), self.userXLB.value(), self.userXUB.value(), self.userYLB.value(), self.userYUB.value())
         tracker.processVideo(self.filename[0].path(), self.progressBar, self.outputfps.value(), int(self.rescaleRatio.text()), self.userXLB.value(), self.userXUB.value(), self.userYLB.value(), self.userYUB.value())
+        self.close()
         
 app = QApplication(sys.argv)
 window = MainWindow()
@@ -134,3 +157,4 @@ windowWidth = window.size().width()
 windowHeight = window.size().height()
 
 app.exec()
+sys.exit()

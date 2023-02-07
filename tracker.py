@@ -99,7 +99,7 @@ def processVideo(filepath, progressBar, outputFPS, rescaleRatio, userXLB, userXU
             break
         
         frame_index += 1
-        # progressBar.setValue(int(100 * frame_index / total_frames))
+        progressBar.setValue(int(100 * frame_index / total_frames))
         # app.processEvents()
         # print(int(100 * frame_index / total_frames))
         print(frame_index)
