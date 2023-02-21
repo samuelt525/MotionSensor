@@ -8,18 +8,20 @@ Item {
     visible:true
     width:800
     height:500
+
     MediaPlayer {
         id:player
         objectName:"player"
         audioOutput:audioOutput
         videoOutput:videoOutput
     }
-
     Connections {
         target: guiParent
         function onResized() {
             topview.width = guiParent.getSize().width-25
-            topview.height = guiParent.getSize().height-175
+            topview.height = guiParent.getSize().height-225
+            //boundRectangle.width = topview.width
+            //boundRectangle.height = topview.height
         }
     }
 
@@ -31,6 +33,7 @@ Item {
     VideoOutput {
         id:videoOutput
         anchors.fill:parent
+
     }
 
     Component.onCompleted: {
@@ -56,6 +59,12 @@ Item {
         onMoved: {
             player.position = player.duration * progressSlider.position
         }
+    }
+
+    Rectangle {
+        id:boundRectangle
+        color: "yellow"
+        opacity: 0.4
     }
 
 
