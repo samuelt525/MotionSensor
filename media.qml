@@ -20,8 +20,11 @@ Item {
         function onResized() {
             topview.width = guiParent.getSize().width-25
             topview.height = guiParent.getSize().height-225
-            //boundRectangle.width = topview.width
-            //boundRectangle.height = topview.height
+        }
+        function onValueChanged() {
+            // bounds = [YLB, YUB, XLB, XUB]
+            let bounds = guiParent.getBounds()
+            boundRectangle.widt = bounds[1]
         }
     }
 
@@ -65,6 +68,10 @@ Item {
         id:boundRectangle
         color: "yellow"
         opacity: 0.4
+        // anchors.verticalCenter: parent.verticalCenter
+        // anchors.horizontalCenter: parent.horizontalCenter
+        width: videoOutput.width
+        height: videoOutput.height
     }
 
 

@@ -2,6 +2,7 @@ import sys
 import os
 import tracker
 import subprocess
+import copy
 from PyQt6.QtCore import QSize, Qt, QUrl, pyqtSlot, pyqtSignal
 from PyQt6.QtMultimedia import QMediaPlayer
 from PyQt6.QtQuickWidgets import QQuickWidget
@@ -11,6 +12,7 @@ from PyQt6.QtGui import QPixmap
 class MainWindow(QWidget):
     # for qml video player resizing with window size; commented out due to segmentation fault error on mac
     resized = pyqtSignal()
+    valueChanged = pyqtSignal()
     def __init__(self):
         super().__init__()
 
@@ -82,17 +84,20 @@ class MainWindow(QWidget):
         self.secondRow.addWidget(self.userYLBLabel)
         self.userYLB = QSpinBox()
         self.secondRow.addWidget(self.userYLB)
+        self.userYLB.valueChanged.connect(self.handleBoundValueChanged)
 
         self.userYUBLabel = QLabel("Height Upper Bound:")
         self.secondRow.addWidget(self.userYUBLabel)
         self.userYUB = QSpinBox()
         self.userYUB.setMaximum(frame_height)
         self.userYUB.setValue(frame_height)
+        self.userYUB.valueChanged.connect(self.handleBoundValueChanged)
         self.secondRow.addWidget(self.userYUB)
 
         self.userXLBLabel = QLabel("Width Lower Bound:")
         self.thirdRow.addWidget(self.userXLBLabel)
         self.userXLB = QSpinBox()
+        self.userXLB.valueChanged.connect(self.handleBoundValueChanged)
         self.thirdRow.addWidget(self.userXLB)
 
         self.userXUBLabel = QLabel("Width Upper Bound:")
@@ -100,6 +105,7 @@ class MainWindow(QWidget):
         self.userXUB = QSpinBox()
         self.userXUB.setMaximum(frame_width)
         self.userXUB.setValue(frame_width)
+        self.userXUB.valueChanged.connect(self.handleBoundValueChanged)
         self.thirdRow.addWidget(self.userXUB)
 
         self.directionLabel = QLabel("Racewalker Direction:")
@@ -135,10 +141,16 @@ class MainWindow(QWidget):
     @pyqtSlot(result=QSize)
     def getSize(self):
         return self.size()
-    # resizes qml video player with window; commented out bc segmentation fault on mac
+    # resizes qml video player with window
     def resizeEvent(self, event):
         self.resized.emit()
+        self.setFixedSize(event.size())
         super(MainWindow, self).resizeEvent(event)
+    def handleBoundValueChanged(self):
+        self.valueChanged.emit()
+    @pyqtSlot(result=list)
+    def getBounds(self):
+        return [self.userYLB.value(), self.userYUB.value(), self.userXLB.value(), self.userXUB.value()]
 
     def processVideo(self):
         self.rescaleRatio.hide()
