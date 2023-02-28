@@ -24,7 +24,16 @@ Item {
         function onValueChanged() {
             // bounds = [YLB, YUB, XLB, XUB]
             let bounds = guiParent.getBounds()
-            boundRectangle.widt = bounds[1]
+            // videoDimensions = [width, height]
+            let videoDimensions = guiParent.getVideoDimensions()
+
+            boundRectangle.height = (bounds[1] * videoOutput.height) / videoDimensions[1]
+            boundRectangle.width = (bounds[3] * videoOutput.width) / videoDimensions[0]
+
+            boundRectangle.y = bounds[0]
+            boundRectangle.height -= boundRectangle.y
+            boundRectangle.x = bounds[2]
+            boundRectangle.width -= boundRectangle.x
         }
     }
 

@@ -57,7 +57,7 @@ class MainWindow(QWidget):
         self.submissionbutton = QPushButton('Submit')
         self.submissionbutton.clicked.connect(self.processVideo)
 
-        frame_width, frame_height, fps  = tracker.getVideoBounds(self.filename[0].path())
+        self.frame_width, self.frame_height, fps  = tracker.getVideoBounds(self.filename[0].path())
 
         self.rescaleRatio = QLineEdit()
         self.outputfps = QSpinBox()
@@ -89,9 +89,10 @@ class MainWindow(QWidget):
         self.userYUBLabel = QLabel("Height Upper Bound:")
         self.secondRow.addWidget(self.userYUBLabel)
         self.userYUB = QSpinBox()
-        self.userYUB.setMaximum(frame_height)
-        self.userYUB.setValue(frame_height)
+        self.userYUB.setMaximum(self.frame_height)
+        self.userYUB.setValue(self.frame_height)
         self.userYUB.valueChanged.connect(self.handleBoundValueChanged)
+        self.userYLB.setMaximum(self.userYUB.value()-1)
         self.secondRow.addWidget(self.userYUB)
 
         self.userXLBLabel = QLabel("Width Lower Bound:")
@@ -103,9 +104,10 @@ class MainWindow(QWidget):
         self.userXUBLabel = QLabel("Width Upper Bound:")
         self.thirdRow.addWidget(self.userXUBLabel)
         self.userXUB = QSpinBox()
-        self.userXUB.setMaximum(frame_width)
-        self.userXUB.setValue(frame_width)
+        self.userXUB.setMaximum(self.frame_width)
+        self.userXUB.setValue(self.frame_width)
         self.userXUB.valueChanged.connect(self.handleBoundValueChanged)
+        self.userXLB.setMaximum(self.userXUB.value()-1)
         self.thirdRow.addWidget(self.userXUB)
 
         self.directionLabel = QLabel("Racewalker Direction:")
@@ -147,10 +149,15 @@ class MainWindow(QWidget):
         self.setFixedSize(event.size())
         super(MainWindow, self).resizeEvent(event)
     def handleBoundValueChanged(self):
+        self.userYLB.setMaximum(self.userYUB.value()-1)
+        self.userXLB.setMaximum(self.userXUB.value()-1)
         self.valueChanged.emit()
     @pyqtSlot(result=list)
     def getBounds(self):
         return [self.userYLB.value(), self.userYUB.value(), self.userXLB.value(), self.userXUB.value()]
+    @pyqtSlot(result=list)
+    def getVideoDimensions(self):
+        return [self.frame_width, self.frame_height]
 
     def processVideo(self):
         self.rescaleRatio.hide()
