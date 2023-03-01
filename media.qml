@@ -30,9 +30,9 @@ Item {
             boundRectangle.height = (bounds[1] * videoOutput.height) / videoDimensions[1]
             boundRectangle.width = (bounds[3] * videoOutput.width) / videoDimensions[0]
 
-            boundRectangle.y = bounds[0]
+            boundRectangle.y = (bounds[0] * videoOutput.width) / videoDimensions[0]
             boundRectangle.height -= boundRectangle.y
-            boundRectangle.x = bounds[2]
+            boundRectangle.x = (bounds[2] * videoOutput.height) / videoDimensions[1]
             boundRectangle.width -= boundRectangle.x
         }
     }
