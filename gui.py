@@ -92,7 +92,6 @@ class MainWindow(QWidget):
         self.userYUB.setMaximum(self.frame_height)
         self.userYUB.setValue(self.frame_height)
         self.userYUB.valueChanged.connect(self.handleBoundValueChanged)
-        self.userYLB.setMaximum(self.userYUB.value()-1)
         self.secondRow.addWidget(self.userYUB)
 
         self.userXLBLabel = QLabel("Width Lower Bound:")
@@ -107,7 +106,6 @@ class MainWindow(QWidget):
         self.userXUB.setMaximum(self.frame_width)
         self.userXUB.setValue(self.frame_width)
         self.userXUB.valueChanged.connect(self.handleBoundValueChanged)
-        self.userXLB.setMaximum(self.userXUB.value()-1)
         self.thirdRow.addWidget(self.userXUB)
 
         self.directionLabel = QLabel("Racewalker Direction:")

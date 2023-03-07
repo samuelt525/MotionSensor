@@ -21,7 +21,19 @@ Item {
             topview.width = guiParent.getSize().width-25
             topview.height = guiParent.getSize().height-225
         }
-        function onValueChanged() {
+        function getRectangles(screenWidth, screenHeight, rectX, rectY, rectWidth, rectHeight) {
+            var spaceWidth = screenWidth - (rectX + rectWidth);
+            var spaceHeight = screenHeight - (rectY + rectHeight);
+
+            var topRect = { x: rectX, y: rectY - spaceHeight/2, width: rectWidth, height: spaceHeight/2 };
+            var bottomRect = { x: rectX, y: rectY + rectHeight, width: rectWidth, height: spaceHeight/2 };
+
+            var leftRect = { x: rectX - spaceWidth/2, y: 0, width: spaceWidth/2, height: rectHeight + spaceHeight/2};
+            var rightRect = { x: rectX + rectWidth, y: 0, width: screenWidth, height: rectHeight + spaceHeight/2};
+
+            return [topRect, bottomRect, leftRect, rightRect];
+        }
+            function onValueChanged() {
             // bounds = [YLB, YUB, XLB, XUB]
             let bounds = guiParent.getBounds()
             // videoDimensions = [width, height]
@@ -34,6 +46,19 @@ Item {
             boundRectangle.height -= boundRectangle.y
             boundRectangle.x = (bounds[2] * videoOutput.height) / videoDimensions[1]
             boundRectangle.width -= boundRectangle.x
+            
+            let rectDimensions = getRectangles(bounds[3], bounds[1], boundRectangle.x, boundRectangle.y, boundRectangle.width, boundRectangle.height)
+
+            let rectangles = [topRect, bottomRect, leftRect, rightRect]
+
+            for (let i = 0; i < rectangles.length; i++){
+                let rect = rectangles[i]
+                let rectDimension = rectDimensions[i]
+                rect.x = rectDimension.x
+                rect.y = rectDimension.y
+                rect.width = rectDimension.width 
+                rect.height = rectDimension.height
+            }
         }
     }
 
@@ -76,11 +101,29 @@ Item {
     Rectangle {
         id:boundRectangle
         color: "yellow"
-        opacity: 0.4
+        opacity: 0
         // anchors.verticalCenter: parent.verticalCenter
         // anchors.horizontalCenter: parent.horizontalCenter
-        width: videoOutput.width
-        height: videoOutput.height
+    }
+    Rectangle{
+        id:topRect
+        color: "green"
+        opacity: 0.4
+    }
+    Rectangle{
+        id:bottomRect
+        color: "green"
+        opacity: 0.4
+    }
+    Rectangle{
+        id:leftRect
+        color: "green"
+        opacity: 0.4
+    }
+    Rectangle{
+        id:rightRect
+        color: "green"
+        opacity: 0.4
     }
 
 
