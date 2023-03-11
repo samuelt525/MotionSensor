@@ -112,3 +112,5 @@ dist
 .DS_Store
 *.pyc
 
+scratch.py
+.vscode/launch.json
