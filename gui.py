@@ -30,7 +30,9 @@ class MainWindow(QWidget):
 
         self.view = QQuickWidget()
         self.view.rootContext().setContextProperty("guiParent", self)
-        self.view.setSource(QUrl.fromLocalFile('media.qml'))
+        qml_file = os.path.join(os.path.dirname(__file__), 'media.qml')
+        self.view.setSource(QUrl.fromLocalFile(qml_file))
+
 
         self.Form = QFormLayout()
 
@@ -182,18 +184,20 @@ class MainWindow(QWidget):
         self.firstRow.addWidget(self.progressBar)
         self.progressLabel = QLabel("Processing video...")
         self.secondRow.addWidget(self.progressLabel)
-        self.setMinimumSize(825, 100)
-        self.resize(825, 100)
+        self.setMinimumSize(825, 200)
+        self.resize(825, 200)
         print(self.filename[0].path(), self.outputfps.value(), int(self.rescaleRatio.text()), self.userXLB.value(), self.userXUB.value(), self.userYLB.value(), self.userYUB.value())
         tracker.processVideo(self.filename[0].path(), self.progressBar, self.outputfps.value(), int(self.rescaleRatio.text()), self.userXLB.value(), self.userXUB.value(), self.userYLB.value(), self.userYUB.value())
         self.close()
-        
-app = QApplication(sys.argv)
-window = MainWindow()
-window.show()
 
-windowWidth = window.size().width()
-windowHeight = window.size().height()
+if __name__ == "__main__":
+    os.chdir(sys._MEIPASS)
+    app = QApplication(sys.argv)
+    window = MainWindow()
+    window.show()
 
-app.exec()
-sys.exit()
+    windowWidth = window.size().width()
+    windowHeight = window.size().height()
+
+    app.exec()
+    sys.exit()

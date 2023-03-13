@@ -107,23 +107,23 @@ Item {
     }
     Rectangle{
         id:topRect
-        color: "green"
-        opacity: 0.4
+        color: "yellow"
+        opacity: 0.2
     }
     Rectangle{
         id:bottomRect
-        color: "green"
-        opacity: 0.4
+        color: "yellow"
+        opacity: 0.2
     }
     Rectangle{
         id:leftRect
-        color: "green"
-        opacity: 0.4
+        color: "yellow"
+        opacity: 0.2
     }
     Rectangle{
         id:rightRect
-        color: "green"
-        opacity: 0.4
+        color: "yellow"
+        opacity: 0.2
     }
 
 
