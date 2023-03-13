@@ -1,3 +1,4 @@
+import math
 import sys
 import os
 import tracker
@@ -80,33 +81,39 @@ class MainWindow(QWidget):
         self.fourthRow = QHBoxLayout()
 
 
-        self.userYLBLabel = QLabel("Height Lower bound:")
+        self.userYLBLabel = QLabel("Height Lower Bound:")
         self.secondRow.addWidget(self.userYLBLabel)
-        self.userYLB = QSpinBox()
+        self.userYLB = QSlider(Qt.Orientation.Horizontal)
+        self.userYLB.setMaximum(math.floor(self.frame_height/2))
         self.secondRow.addWidget(self.userYLB)
         self.userYLB.valueChanged.connect(self.handleBoundValueChanged)
 
         self.userYUBLabel = QLabel("Height Upper Bound:")
         self.secondRow.addWidget(self.userYUBLabel)
-        self.userYUB = QSpinBox()
+        self.userYUB = QSlider(Qt.Orientation.Horizontal)
+        self.userYUB.setMinimum(math.floor(self.frame_height / 2))
         self.userYUB.setMaximum(self.frame_height)
         self.userYUB.setValue(self.frame_height)
         self.userYUB.valueChanged.connect(self.handleBoundValueChanged)
         self.secondRow.addWidget(self.userYUB)
 
+
         self.userXLBLabel = QLabel("Width Lower Bound:")
         self.thirdRow.addWidget(self.userXLBLabel)
-        self.userXLB = QSpinBox()
+        self.userXLB = QSlider(Qt.Orientation.Horizontal)
+        self.userXLB.setMaximum(math.floor(self.frame_width/2))
         self.userXLB.valueChanged.connect(self.handleBoundValueChanged)
         self.thirdRow.addWidget(self.userXLB)
 
         self.userXUBLabel = QLabel("Width Upper Bound:")
         self.thirdRow.addWidget(self.userXUBLabel)
-        self.userXUB = QSpinBox()
+        self.userXUB = QSlider(Qt.Orientation.Horizontal)
+        self.userXUB.setMinimum(math.floor(self.frame_width/2))
         self.userXUB.setMaximum(self.frame_width)
         self.userXUB.setValue(self.frame_width)
         self.userXUB.valueChanged.connect(self.handleBoundValueChanged)
         self.thirdRow.addWidget(self.userXUB)
+
 
         self.directionLabel = QLabel("Racewalker Direction:")
         self.fourthRow.addWidget(self.directionLabel)
@@ -147,8 +154,6 @@ class MainWindow(QWidget):
         self.setFixedSize(event.size())
         super(MainWindow, self).resizeEvent(event)
     def handleBoundValueChanged(self):
-        self.userYLB.setMaximum(self.userYUB.value()-1)
-        self.userXLB.setMaximum(self.userXUB.value()-1)
         self.valueChanged.emit()
     @pyqtSlot(result=list)
     def getBounds(self):

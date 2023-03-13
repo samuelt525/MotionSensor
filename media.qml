@@ -25,14 +25,14 @@ Item {
             var spaceWidth = screenWidth - (rectX + rectWidth);
             var spaceHeight = screenHeight - (rectY + rectHeight);
 
-            var topRect = { x: rectX, y: rectY - spaceHeight/2, width: rectWidth, height: spaceHeight/2 };
-            var bottomRect = { x: rectX, y: rectY + rectHeight, width: rectWidth, height: spaceHeight/2 };
-
-            var leftRect = { x: rectX - spaceWidth/2, y: 0, width: spaceWidth/2, height: rectHeight + spaceHeight/2};
-            var rightRect = { x: rectX + rectWidth, y: 0, width: screenWidth, height: rectHeight + spaceHeight/2};
+            var topRect = { x: 0, y: rectY - spaceHeight/2, width: rectWidth + spaceWidth, height: spaceHeight/2 };
+            var bottomRect = { x: 0, y: rectY + rectHeight, width: rectWidth + spaceWidth, height: spaceHeight/2 };
+            var leftRect = { x: rectX - spaceWidth/2, y: rectY, width: spaceWidth/2, height: rectHeight};
+            var rightRect = { x: rectX + rectWidth, y: rectY, width: spaceWidth/2, height: rectHeight};
 
             return [topRect, bottomRect, leftRect, rightRect];
-        }
+            }
+        
             function onValueChanged() {
             // bounds = [YLB, YUB, XLB, XUB]
             let bounds = guiParent.getBounds()
