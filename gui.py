@@ -1,7 +1,9 @@
+import math
 import sys
 import os
 import tracker
 import subprocess
+import copy
 from PyQt6.QtCore import QSize, Qt, QUrl, pyqtSlot, pyqtSignal
 from PyQt6.QtMultimedia import QMediaPlayer
 from PyQt6.QtQuickWidgets import QQuickWidget
@@ -11,6 +13,7 @@ from PyQt6.QtGui import QPixmap
 class MainWindow(QWidget):
     # for qml video player resizing with window size; commented out due to segmentation fault error on mac
     resized = pyqtSignal()
+    valueChanged = pyqtSignal()
     def __init__(self):
         super().__init__()
 
@@ -55,7 +58,7 @@ class MainWindow(QWidget):
         self.submissionbutton = QPushButton('Submit')
         self.submissionbutton.clicked.connect(self.processVideo)
 
-        frame_width, frame_height, fps  = tracker.getVideoBounds(self.filename[0].path())
+        self.frame_width, self.frame_height, fps  = tracker.getVideoBounds(self.filename[0].path())
 
         self.rescaleRatio = QLineEdit()
         self.outputfps = QSpinBox()
@@ -78,29 +81,39 @@ class MainWindow(QWidget):
         self.fourthRow = QHBoxLayout()
 
 
-        self.userYLBLabel = QLabel("Height Lower bound:")
+        self.userYLBLabel = QLabel("Height Lower Bound:")
         self.secondRow.addWidget(self.userYLBLabel)
-        self.userYLB = QSpinBox()
+        self.userYLB = QSlider(Qt.Orientation.Horizontal)
+        self.userYLB.setMaximum(math.floor(self.frame_height/2))
         self.secondRow.addWidget(self.userYLB)
+        self.userYLB.valueChanged.connect(self.handleBoundValueChanged)
 
         self.userYUBLabel = QLabel("Height Upper Bound:")
         self.secondRow.addWidget(self.userYUBLabel)
-        self.userYUB = QSpinBox()
-        self.userYUB.setMaximum(frame_height)
-        self.userYUB.setValue(frame_height)
+        self.userYUB = QSlider(Qt.Orientation.Horizontal)
+        self.userYUB.setMinimum(math.floor(self.frame_height / 2))
+        self.userYUB.setMaximum(self.frame_height)
+        self.userYUB.setValue(self.frame_height)
+        self.userYUB.valueChanged.connect(self.handleBoundValueChanged)
         self.secondRow.addWidget(self.userYUB)
+
 
         self.userXLBLabel = QLabel("Width Lower Bound:")
         self.thirdRow.addWidget(self.userXLBLabel)
-        self.userXLB = QSpinBox()
+        self.userXLB = QSlider(Qt.Orientation.Horizontal)
+        self.userXLB.setMaximum(math.floor(self.frame_width/2))
+        self.userXLB.valueChanged.connect(self.handleBoundValueChanged)
         self.thirdRow.addWidget(self.userXLB)
 
         self.userXUBLabel = QLabel("Width Upper Bound:")
         self.thirdRow.addWidget(self.userXUBLabel)
-        self.userXUB = QSpinBox()
-        self.userXUB.setMaximum(frame_width)
-        self.userXUB.setValue(frame_width)
+        self.userXUB = QSlider(Qt.Orientation.Horizontal)
+        self.userXUB.setMinimum(math.floor(self.frame_width/2))
+        self.userXUB.setMaximum(self.frame_width)
+        self.userXUB.setValue(self.frame_width)
+        self.userXUB.valueChanged.connect(self.handleBoundValueChanged)
         self.thirdRow.addWidget(self.userXUB)
+
 
         self.directionLabel = QLabel("Racewalker Direction:")
         self.fourthRow.addWidget(self.directionLabel)
@@ -135,10 +148,19 @@ class MainWindow(QWidget):
     @pyqtSlot(result=QSize)
     def getSize(self):
         return self.size()
-    # resizes qml video player with window; commented out bc segmentation fault on mac
+    # resizes qml video player with window
     def resizeEvent(self, event):
         self.resized.emit()
+        self.setFixedSize(event.size())
         super(MainWindow, self).resizeEvent(event)
+    def handleBoundValueChanged(self):
+        self.valueChanged.emit()
+    @pyqtSlot(result=list)
+    def getBounds(self):
+        return [self.userYLB.value(), self.userYUB.value(), self.userXLB.value(), self.userXUB.value()]
+    @pyqtSlot(result=list)
+    def getVideoDimensions(self):
+        return [self.frame_width, self.frame_height]
 
     def processVideo(self):
         self.rescaleRatio.hide()
