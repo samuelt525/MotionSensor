@@ -28,6 +28,7 @@ def processVideo(filepath, progressBar, outputFPS, rescaleRatio, userXLB, userXU
     fps = int(cap.get(cv2.CAP_PROP_FPS))
     width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
     height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+    progress_index = 0
   
     # Specify the desired framerate
     desired_fps = outputFPS
@@ -54,7 +55,10 @@ def processVideo(filepath, progressBar, outputFPS, rescaleRatio, userXLB, userXU
 
         if not ret:  # check if the frame is empty
             continue
-
+        
+        progress_index += 1
+        progressBar.setValue(int(100 * progress_index / total_frames))
+        
         frame = cv2.resize(frame, (int(width*scale_factor), int(height*scale_factor)))
         
         # Apply background subtraction to the current frame
@@ -94,5 +98,5 @@ def processVideo(filepath, progressBar, outputFPS, rescaleRatio, userXLB, userXU
     cv2.destroyAllWindows()
 
 if __name__ == '__main__': 
-    prog_bar = []
+    prog_bar = 0
     processVideo("/Users/humaid/Documents/seniordesign/code/main/MotionTracker54/C0078_720p60_40s.mp4", prog_bar, 60, 100, 0, 2160, 0, 3840)
