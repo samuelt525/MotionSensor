@@ -71,7 +71,7 @@ class MainWindow(QWidget):
         self.outputfpsLabel = QLabel("Output FPS:")
         self.firstRow.addWidget(self.outputfpsLabel)
         self.outputfps.setValue(int(fps))
-        self.outputfps.setMaximum(int(fps))
+        # self.outputfps.setMaximum(int(math.ceil(fps)))
         self.firstRow.addWidget(self.outputfps)
         self.Form.addRow(self.firstRow)
 
