@@ -8,7 +8,7 @@ if os.path.exists("./skip_output_video.mp4"):
     os.remove("./skip_output_video.mp4")
 
 # Create a video capture object
-cap = cv2.VideoCapture('../../../videos/C0078-720p60.mp4')
+cap = cv2.VideoCapture('./C0078_720p60_40s.mp4')
 
 # enable OpenCV CPU multithreading
 cv2.setUseOptimized(True)
