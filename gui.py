@@ -44,8 +44,6 @@ class MainWindow(QWidget):
         self.Form.addRow(self.h_layout)
         self.setLayout(self.Form)
 
-        self.progressBar = QProgressBar()
-
     def getfile(self):
         self.filename = QFileDialog.getOpenFileUrl(self, 'Open file')
         self.filebutton.hide()
@@ -138,7 +136,6 @@ class MainWindow(QWidget):
         self.setMinimumSize(self.width, self.height)
         self.resize(self.width, self.height)
 
-        #print(self.view.rootObject().findChild())
         self.player = self.view.rootObject().findChild(QMediaPlayer, "player")
         self.player.setProperty('source', self.filename[0].path())
         self.player.setLoops(self.player.Loops.Infinite)
@@ -165,33 +162,42 @@ class MainWindow(QWidget):
         return [self.frame_width, self.frame_height]
 
     def processVideo(self):
-        self.rescaleRatio.hide()
-        self.rescaleRatioLabel.hide()
-        self.outputfps.hide()
-        self.outputfpsLabel.hide()
-        self.userYLB.hide()
-        self.userYLBLabel.hide()
-        self.userYUB.hide()
-        self.userYUBLabel.hide()
-        self.userXLB.hide()
-        self.userXLBLabel.hide()
-        self.userXUB.hide()
-        self.userXUBLabel.hide()
-        self.view.hide()
-        self.submissionbutton.hide()
+        fileName = self.filename[0].path()
+        outputfps = self.outputfps.value()
+        rescaleRatio = int(self.rescaleRatio.text())
+        xlb = self.userXLB.value() 
+        xub = self.userXUB.value() 
+        ylb = self.userYLB.value()
+        yub = self.userYUB.value()
 
-        self.progressBar.setGeometry(50, 50, 250, 30)
-        self.firstRow.addWidget(self.progressBar)
-        self.progressLabel = QLabel("Processing video...")
-        self.secondRow.addWidget(self.progressLabel)
-        self.setMinimumSize(825, 200)
-        self.resize(825, 200)
-        print(self.filename[0].path(), self.outputfps.value(), int(self.rescaleRatio.text()), self.userXLB.value(), self.userXUB.value(), self.userYLB.value(), self.userYUB.value())
-        tracker.processVideo(self.filename[0].path(), self.progressBar, self.outputfps.value(), int(self.rescaleRatio.text()), self.userXLB.value(), self.userXUB.value(), self.userYLB.value(), self.userYUB.value())
+        self.Form.removeRow(self.firstRow)
+        self.Form.removeRow(self.secondRow)
+        self.Form.removeRow(self.thirdRow)
+        self.Form.removeRow(self.fourthRow)
+        self.Form.removeWidget(self.submissionbutton)
+        self.Form.removeRow(self.view) 
+
+        progressBar = QProgressBar()
+
+        progressBar.setGeometry(50, 50, 250, 30)
+
+        progressBarRow = QHBoxLayout()
+        progressBarRow.addWidget(progressBar)
+        self.Form.addRow(progressBarRow)
+
+        progressLabelRow = QHBoxLayout()
+        progressLabel = QLabel("Processing video...")
+        progressLabelRow.addWidget(progressLabel)
+        self.Form.addRow(progressLabelRow)
+        self.setMinimumSize(825, 150)
+        self.resize(825, 150)
+        
+        tracker.processVideo(fileName, progressBar, outputfps, rescaleRatio, xlb, xub, ylb, yub)
         self.close()
 
 if __name__ == "__main__":
-    os.chdir(sys._MEIPASS)
+    #NEEDED FOR PYINSTALLER if not build/dist comment out
+    #os.chdir(sys._MEIPASS)
     app = QApplication(sys.argv)
     window = MainWindow()
     window.show()
