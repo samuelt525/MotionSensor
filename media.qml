@@ -130,7 +130,7 @@ Item {
     Button {
         id:playPauseButton
         text:"Play/Pause"
-        anchors.bottom:parent.bottom
+        y: 400
 
         onClicked: {
             if (player.playbackState === 1)
