@@ -29,10 +29,10 @@ class MainWindow(QMainWindow):
         
         # Set the window title and show the window
         self.setWindowTitle('Main Window')
-        self.show();
+        self.show()
 
     def InitializeMenu(self):
-        self.menuBar = QMenuBar()
+        self.menuBar = self.menuBar()
         self.fileMenu = QMenu('File')
         self.menuBar.addMenu(self.fileMenu)
         self.defaultPath = QAction('Default Path')
