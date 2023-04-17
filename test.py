@@ -24,12 +24,16 @@ class MainWindow(QMainWindow):
         self.InitializeMenu()
 
         # Create a QWidget and set its layout
-        widget = CustomWidget()
-        self.setCentralWidget(widget)
+        self.widget = CustomWidget()
+        self.setCentralWidget(self.widget)
         
         # Set the window title and show the window
         self.setWindowTitle('Main Window')
         self.show()
+        self.widget.closed.connect(self.close)
+
+    def close(self):
+        super().close()
 
     def InitializeMenu(self):
         self.menuBar = self.menuBar()
@@ -57,16 +61,20 @@ class MainWindow(QMainWindow):
 
         # create file path
         file_path = os.path.join(documents_dir, "MotionTracker")
-
         # write data to file
-        with open(file_path, "w") as f:
-            f.write(text_input.text())
-        print("File saved to:", file_path)
-
+        if text_input.text():
+            with open(file_path, "w") as f:
+                    f.write(text_input.text())
+                    print("File saved to:", file_path)
 
 class CustomWidget(QWidget):
     resized = pyqtSignal()
     valueChanged = pyqtSignal()
+    closed = pyqtSignal()
+    def closeEvent(self, event):
+        self.closed.emit()
+        super().closeEvent(event)
+
 
     def __init__(self):
         super().__init__()
@@ -99,7 +107,7 @@ class CustomWidget(QWidget):
         self.setLayout(self.Form)
 
     def getfile(self):
-        file_name = "MotionTracker.txt"
+        file_name = "MotionTracker"
         file_dialog = QFileDialog(self, 'Open File')
         if os.path.exists(os.path.join(documents_dir, file_name)):
             with open(os.path.join(documents_dir, file_name)) as f:
@@ -267,6 +275,9 @@ if __name__ == "__main__":
     app = QApplication(sys.argv)
     window = MainWindow()
     window.show()
+
+    windowWidth = window.size().width()
+    windowHeight = window.size().height()
 
     app.exec()
     sys.exit()
