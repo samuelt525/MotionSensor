@@ -7,15 +7,21 @@ import copy
 from PyQt6.QtCore import QSize, Qt, QUrl, pyqtSlot, pyqtSignal
 from PyQt6.QtMultimedia import QMediaPlayer
 from PyQt6.QtQuickWidgets import QQuickWidget
-from PyQt6.QtWidgets import QApplication, QPushButton, QFileDialog, QLineEdit, QFormLayout, QWidget, QWidgetItem, QGroupBox, QHBoxLayout, QLabel, QSpinBox, QSlider, QProgressBar, QRadioButton
-from PyQt6.QtGui import QPixmap
+from PyQt6.QtWidgets import QApplication, QPushButton, QDialog, QMenuBar, QVBoxLayout, QMenu, QFileDialog, QLineEdit, QFormLayout, QWidget, QWidgetItem, QGroupBox, QHBoxLayout, QLabel, QSpinBox, QSlider, QProgressBar, QRadioButton
+from PyQt6.QtGui import QPixmap, QAction
+
+
+
+documents_dir = os.path.expanduser("~/Documents")
 
 class MainWindow(QWidget):
     resized = pyqtSignal()
     valueChanged = pyqtSignal()
+
     def __init__(self):
         super().__init__()
 
+        self.InitializeMenu()
         self.filename = ''
         self.setWindowTitle("Motion Tracker")
         # File
@@ -43,8 +49,50 @@ class MainWindow(QWidget):
         self.Form.addRow(self.h_layout)
         self.setLayout(self.Form)
 
+    def InitializeMenu(self):
+        self.menuBar = QMenuBar()
+        self.fileMenu = QMenu('File')
+        self.menuBar.addMenu(self.fileMenu)
+        self.defaultPath = QAction('Default Path')
+        self.fileMenu.addAction(self.defaultPath)
+        self.defaultPath.triggered.connect(self.DefaultPathDialog)
+        
+    def DefaultPathDialog(self):
+        dialog = QDialog(self)
+        dialog.setWindowTitle('Text Input')
+        layout = QVBoxLayout()
+
+        # create text input
+        text_input = QLineEdit()
+        layout.addWidget(text_input)
+
+        # create OK button
+        ok_button = QPushButton('OK')
+        ok_button.clicked.connect(dialog.accept)
+        layout.addWidget(ok_button)
+        dialog.setLayout(layout)
+        dialog.exec()
+
+        # create file path
+        file_path = os.path.join(documents_dir, "MotionTracker")
+
+        # write data to file
+        with open(file_path, "w") as f:
+            f.write(text_input.text())
+        print("File saved to:", file_path)
+
     def getfile(self):
-        self.filename = QFileDialog.getOpenFileUrl(self, 'Open file')
+        file_name = "MotionTracker.txt"
+        file_dialog = QFileDialog(self, 'Open File')
+        if os.path.exists(os.path.join(documents_dir, file_name)):
+            with open(os.path.join(documents_dir, file_name)) as f:
+                path = f.readline()
+            file_dialog.setDirectory(path)
+            self.filename = file_dialog.getOpenFileName()
+        else:
+            self.filename = file_dialog.getOpenFileName()
+        if self.filename[0] == '':
+            exit()
         self.filebutton.hide()
         self.logo.hide()
         self.initializeForm()
@@ -57,7 +105,7 @@ class MainWindow(QWidget):
         self.submissionbutton = QPushButton('Submit')
         self.submissionbutton.clicked.connect(self.processVideo)
 
-        self.frame_width, self.frame_height, fps  = tracker.getVideoBounds(self.filename[0].path())
+        self.frame_width, self.frame_height, fps  = tracker.getVideoBounds(self.filename[0])
 
         self.rescaleRatio = QLineEdit()
         self.outputfps = QSpinBox()
@@ -136,7 +184,7 @@ class MainWindow(QWidget):
         self.resize(self.width, self.height)
 
         self.player = self.view.rootObject().findChild(QMediaPlayer, "player")
-        self.player.setProperty('source', self.filename[0].path())
+        self.player.setProperty('source', self.filename[0])
         self.player.setLoops(self.player.Loops.Infinite)
         self.player.play() 
 
@@ -161,7 +209,7 @@ class MainWindow(QWidget):
         return [self.frame_width, self.frame_height]
 
     def processVideo(self):
-        fileName = self.filename[0].path()
+        fileName = self.filename[0]
         outputfps = self.outputfps.value()
         rescaleRatio = int(self.rescaleRatio.text())
         xlb = self.userXLB.value() 
