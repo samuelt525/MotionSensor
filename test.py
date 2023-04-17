@@ -7,50 +7,30 @@ import copy
 from PyQt6.QtCore import QSize, Qt, QUrl, pyqtSlot, pyqtSignal
 from PyQt6.QtMultimedia import QMediaPlayer
 from PyQt6.QtQuickWidgets import QQuickWidget
-from PyQt6.QtWidgets import QApplication, QPushButton, QDialog, QMenuBar, QVBoxLayout, QMenu, QFileDialog, QLineEdit, QFormLayout, QWidget, QWidgetItem, QGroupBox, QHBoxLayout, QLabel, QSpinBox, QSlider, QProgressBar, QRadioButton
+from PyQt6.QtWidgets import QApplication, QMainWindow, QPushButton, QDialog, QMenuBar, QVBoxLayout, QMenu, QFileDialog, QLineEdit, QFormLayout, QWidget, QWidgetItem, QGroupBox, QHBoxLayout, QLabel, QSpinBox, QSlider, QProgressBar, QRadioButton
 from PyQt6.QtGui import QPixmap, QAction
 
 
 
 documents_dir = os.path.expanduser("~/Documents")
 
-class MainWindow(QWidget):
-    resized = pyqtSignal()
-    valueChanged = pyqtSignal()
-
+class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
 
+        
         self.InitializeMenu()
-        self.filename = ''
-        self.setWindowTitle("Motion Tracker")
-        # File
-        self.formInitialized = False
-        self.filebutton = QPushButton("Select File")
-        self.filebutton.clicked.connect(self.getfile)
-        self.filebutton.setFixedWidth(500)
-        self.h_layout = QHBoxLayout()
-        self.h_layout.addWidget(self.filebutton)
-        self.h_layout.setAlignment(Qt.AlignmentFlag.AlignHCenter | Qt.AlignmentFlag.AlignVCenter)
 
-        self.view = QQuickWidget()
-        self.view.rootContext().setContextProperty("guiParent", self)
-        qml_file = os.path.join(os.path.dirname(__file__), 'media.qml')
-        self.view.setSource(QUrl.fromLocalFile(qml_file))
-
-
-        self.Form = QFormLayout()
-
-        self.logo = QLabel()
-        pixmap = QPixmap('Logo.png')
-        pixmap = pixmap.scaled(500,160)
-        self.logo.setPixmap(pixmap)
-        self.Form.addRow(self.logo)
-        self.Form.addRow(self.h_layout)
-        self.setLayout(self.Form)
+        # Create a QWidget and set its layout
+        widget = CustomWidget()
+        self.setCentralWidget(widget)
+        
+        # Set the window title and show the window
+        self.setWindowTitle('Main Window')
+        self.show();
 
     def InitializeMenu(self):
-        self.menuBar = QMenuBar()
+        self.menuBar = self.menuBar()
         self.fileMenu = QMenu('File')
         self.menuBar.addMenu(self.fileMenu)
         self.defaultPath = QAction('Default Path')
@@ -81,8 +61,43 @@ class MainWindow(QWidget):
             f.write(text_input.text())
         print("File saved to:", file_path)
 
+
+class CustomWidget(QWidget):
+    resized = pyqtSignal()
+    valueChanged = pyqtSignal()
+
+    def __init__(self):
+        super().__init__()
+
+        self.filename = ''
+        self.setWindowTitle("Motion Tracker")
+        # File
+        self.formInitialized = False
+        self.filebutton = QPushButton("Select File")
+        self.filebutton.clicked.connect(self.getfile)
+        self.filebutton.setFixedWidth(500)
+        self.h_layout = QHBoxLayout()
+        self.h_layout.addWidget(self.filebutton)
+        self.h_layout.setAlignment(Qt.AlignmentFlag.AlignHCenter | Qt.AlignmentFlag.AlignVCenter)
+
+        self.view = QQuickWidget()
+        self.view.rootContext().setContextProperty("guiParent", self)
+        qml_file = os.path.join(os.path.dirname(__file__), 'media.qml')
+        self.view.setSource(QUrl.fromLocalFile(qml_file))
+
+
+        self.Form = QFormLayout()
+
+        self.logo = QLabel()
+        pixmap = QPixmap('Logo.png')
+        pixmap = pixmap.scaled(500,160)
+        self.logo.setPixmap(pixmap)
+        self.Form.addRow(self.logo)
+        self.Form.addRow(self.h_layout)
+        self.setLayout(self.Form)
+
     def getfile(self):
-        file_name = "MotionTracker"
+        file_name = "MotionTracker.txt"
         file_dialog = QFileDialog(self, 'Open File')
         if os.path.exists(os.path.join(documents_dir, file_name)):
             with open(os.path.join(documents_dir, file_name)) as f:
@@ -198,7 +213,7 @@ class MainWindow(QWidget):
     def resizeEvent(self, event):
         self.resized.emit()
         self.setFixedSize(event.size())
-        super(MainWindow, self).resizeEvent(event)
+        super(CustomWidget, self).resizeEvent(event)
     def handleBoundValueChanged(self):
         self.valueChanged.emit()
     @pyqtSlot(result=list)
@@ -240,6 +255,7 @@ class MainWindow(QWidget):
         self.resize(825, 150)
         
         QApplication.processEvents()
+        print(fileName, progressBar, outputfps, rescaleRatio, xlb, xub, ylb, yub)
         tracker.processVideo(fileName, progressBar, outputfps, rescaleRatio, xlb, xub, ylb, yub)
         self.close()
 
@@ -249,9 +265,6 @@ if __name__ == "__main__":
     app = QApplication(sys.argv)
     window = MainWindow()
     window.show()
-
-    windowWidth = window.size().width()
-    windowHeight = window.size().height()
 
     app.exec()
     sys.exit()
