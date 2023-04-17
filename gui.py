@@ -11,7 +11,6 @@ from PyQt6.QtWidgets import QApplication, QPushButton, QFileDialog, QLineEdit, Q
 from PyQt6.QtGui import QPixmap
 
 class MainWindow(QWidget):
-    # for qml video player resizing with window size; commented out due to segmentation fault error on mac
     resized = pyqtSignal()
     valueChanged = pyqtSignal()
     def __init__(self):
@@ -192,6 +191,7 @@ class MainWindow(QWidget):
         self.setMinimumSize(825, 150)
         self.resize(825, 150)
         
+        QApplication.processEvents()
         tracker.processVideo(fileName, progressBar, outputfps, rescaleRatio, xlb, xub, ylb, yub)
         self.close()
 
