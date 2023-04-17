@@ -82,7 +82,7 @@ class MainWindow(QWidget):
         print("File saved to:", file_path)
 
     def getfile(self):
-        file_name = "MotionTracker.txt"
+        file_name = "MotionTracker"
         file_dialog = QFileDialog(self, 'Open File')
         if os.path.exists(os.path.join(documents_dir, file_name)):
             with open(os.path.join(documents_dir, file_name)) as f:
