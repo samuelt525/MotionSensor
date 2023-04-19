@@ -35,21 +35,29 @@ class MainWindow(QMainWindow):
     def close(self):
         super().close()
 
+
     def InitializeMenu(self):
         self.menuBar = self.menuBar()
         self.fileMenu = QMenu('File')
         self.menuBar.addMenu(self.fileMenu)
-        self.defaultPath = QAction('Default Path')
-        self.fileMenu.addAction(self.defaultPath)
-        self.defaultPath.triggered.connect(self.DefaultPathDialog)
+
+        self.defaultVideoPath = QAction('Default Input Video Path')
+        self.fileMenu.addAction(self.defaultVideoPath)
+        self.defaultVideoPath.triggered.connect(self.DefaultInputPathDialog)
+
+        self.defaultOutputPath = QAction('Default Output Video Path')
+        self.fileMenu.addAction(self.defaultOutputPath)
+        self.defaultOutputPath.triggered.connect(self.DefaultOutputPathDialog)
         
-    def DefaultPathDialog(self):
+    def DefaultInputPathDialog(self):
         dialog = QDialog(self)
         dialog.setWindowTitle('Text Input')
         layout = QVBoxLayout()
 
         # create text input
+        text_label = QLabel('Enter Input Video Path')
         text_input = QLineEdit()
+        layout.addWidget(text_label)
         layout.addWidget(text_input)
 
         # create OK button
@@ -57,15 +65,64 @@ class MainWindow(QMainWindow):
         ok_button.clicked.connect(dialog.accept)
         layout.addWidget(ok_button)
         dialog.setLayout(layout)
-        dialog.exec()
-
         # create file path
         file_path = os.path.join(documents_dir, "MotionTracker")
-        # write data to file
-        if text_input.text():
-            with open(file_path, "w") as f:
-                    f.write(text_input.text())
-                    print("File saved to:", file_path)
+        if os.path.exists(file_path):
+            with open (file_path,"r") as rf:
+                firstline = rf.readline()
+                text_input.setText(firstline)
+        accept = dialog.exec()
+
+        if accept:
+            # write data to file
+            if text_input.text():
+                lines = []
+                print(text_input.text())
+                with open(file_path, 'r') as f:
+                    lines = f.readlines()
+                with open(file_path, "w") as f:
+                    lines[0] = text_input.text()
+                    for line in lines:
+                        f.write(f'{line.strip()}' +'\n')
+                print("File saved to:", file_path)
+
+    def DefaultOutputPathDialog(self):
+        dialog = QDialog(self)
+        dialog.setWindowTitle('Text Input')
+        layout = QVBoxLayout()
+
+        # create text input
+        text_label = QLabel('Enter Output Video Path')
+        text_input = QLineEdit()
+        layout.addWidget(text_label)
+        layout.addWidget(text_input)
+
+        # create OK button
+        ok_button = QPushButton('OK')
+        ok_button.clicked.connect(dialog.accept)
+        layout.addWidget(ok_button)
+        dialog.setLayout(layout)
+        # create file path
+        file_path = os.path.join(documents_dir, "MotionTracker")
+        if os.path.exists(file_path):
+            with open (file_path,"r") as rf:
+                rf.readline()
+                secondline = rf.readline()
+                text_input.setText(secondline)
+        accept = dialog.exec()
+
+        if accept:
+            # write data to file
+            if text_input.text():
+                lines = []
+                with open(file_path, 'r') as f:
+                    lines = f.readlines()
+                with open(file_path, "w") as f:
+                        lines[1] = text_input.text()
+                        for line in lines:
+                            f.write(f'{line.strip()}' +'\n')
+                print("File saved to:", file_path)
+
     def resizeLol(self, yuh):
         self.setMinimumSize(825, 150)
         self.resize(825, 150)
