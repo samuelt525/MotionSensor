@@ -24,7 +24,7 @@ class MainWindow(QMainWindow):
         self.InitializeMenu()
 
         # Create a QWidget and set its layout
-        self.widget = CustomWidget()
+        self.widget = CustomWidget(self)
         self.setCentralWidget(self.widget)
         
         # Set the window title and show the window
@@ -66,6 +66,9 @@ class MainWindow(QMainWindow):
             with open(file_path, "w") as f:
                     f.write(text_input.text())
                     print("File saved to:", file_path)
+    def resizeLol(self, yuh):
+        self.setMinimumSize(825, 150)
+        self.resize(825, 150)
 
 class CustomWidget(QWidget):
     resized = pyqtSignal()
@@ -76,9 +79,10 @@ class CustomWidget(QWidget):
         super().closeEvent(event)
 
 
-    def __init__(self):
+    def __init__(self, mainWindowParent):
         super().__init__()
 
+        self.mainWindowParent = mainWindowParent
         self.filename = ''
         self.setWindowTitle("Motion Tracker")
         # File
@@ -263,6 +267,7 @@ class CustomWidget(QWidget):
         self.Form.addRow(progressLabelRow)
         self.setMinimumSize(825, 150)
         self.resize(825, 150)
+        self.mainWindowParent.resizeLol(self.mainWindowParent)
         
         QApplication.processEvents()
         print(fileName, progressBar, outputfps, rescaleRatio, xlb, xub, ylb, yub)
