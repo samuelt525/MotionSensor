@@ -2,12 +2,12 @@ import math
 import sys
 import os
 import tracker
-import subprocess
-import copy
 from PyQt6.QtCore import QSize, Qt, QUrl, pyqtSlot, pyqtSignal
 from PyQt6.QtMultimedia import QMediaPlayer
 from PyQt6.QtQuickWidgets import QQuickWidget
-from PyQt6.QtWidgets import QApplication, QMainWindow, QPushButton, QDialog, QMenuBar, QVBoxLayout, QMenu, QFileDialog, QLineEdit, QFormLayout, QWidget, QWidgetItem, QGroupBox, QHBoxLayout, QLabel, QSpinBox, QSlider, QProgressBar, QRadioButton
+from PyQt6.QtWidgets import (QApplication, QMainWindow, QPushButton, QDialog, QVBoxLayout, QMenu, 
+                             QFileDialog, QLineEdit, QFormLayout, QWidget, QHBoxLayout, 
+                             QLabel, QSpinBox, QSlider, QProgressBar, QRadioButton)
 from PyQt6.QtGui import QPixmap, QAction
 
 documents_dir = ''
