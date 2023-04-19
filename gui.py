@@ -73,13 +73,12 @@ class MainWindow(QMainWindow):
                 text_input.setText(firstline)
         accept = dialog.exec()
 
-        if accept:
-            # write data to file
-            if text_input.text():
-                lines = []
+        if accept and text_input.text():
+                lines = ['', '']
                 print(text_input.text())
-                with open(file_path, 'r') as f:
-                    lines = f.readlines()
+                if os.path.exists(file_path):
+                    with open(file_path, 'r') as f:
+                        lines = f.readlines()
                 with open(file_path, "w") as f:
                     lines[0] = text_input.text()
                     for line in lines:
@@ -111,12 +110,11 @@ class MainWindow(QMainWindow):
                 text_input.setText(secondline)
         accept = dialog.exec()
 
-        if accept:
-            # write data to file
-            if text_input.text():
-                lines = []
-                with open(file_path, 'r') as f:
-                    lines = f.readlines()
+        if accept and text_input.text():
+                lines = ['', '']
+                if os.path.exists(file_path):
+                    with open(file_path, 'r') as f:
+                        lines = f.readlines()
                 with open(file_path, "w") as f:
                         lines[1] = text_input.text()
                         for line in lines:
