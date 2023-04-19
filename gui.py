@@ -7,21 +7,82 @@ import copy
 from PyQt6.QtCore import QSize, Qt, QUrl, pyqtSlot, pyqtSignal
 from PyQt6.QtMultimedia import QMediaPlayer
 from PyQt6.QtQuickWidgets import QQuickWidget
-from PyQt6.QtWidgets import QApplication, QPushButton, QDialog, QMenuBar, QVBoxLayout, QMenu, QFileDialog, QLineEdit, QFormLayout, QWidget, QWidgetItem, QGroupBox, QHBoxLayout, QLabel, QSpinBox, QSlider, QProgressBar, QRadioButton
+from PyQt6.QtWidgets import QApplication, QMainWindow, QPushButton, QDialog, QMenuBar, QVBoxLayout, QMenu, QFileDialog, QLineEdit, QFormLayout, QWidget, QWidgetItem, QGroupBox, QHBoxLayout, QLabel, QSpinBox, QSlider, QProgressBar, QRadioButton
 from PyQt6.QtGui import QPixmap, QAction
 
+documents_dir = ''
+if (sys.platform == 'win32'):
+    documents_dir = os.getenv('USERPROFILE') + '\Documents'
+else:
+    documents_dir = os.path.expanduser("~/Documents")
 
-
-documents_dir = os.path.expanduser("~/Documents")
-
-class MainWindow(QWidget):
-    resized = pyqtSignal()
-    valueChanged = pyqtSignal()
-
+class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
 
+        
         self.InitializeMenu()
+
+        # Create a QWidget and set its layout
+        self.widget = CustomWidget(self)
+        self.setCentralWidget(self.widget)
+        
+        # Set the window title and show the window
+        self.setWindowTitle('Main Window')
+        self.show()
+        self.widget.closed.connect(self.close)
+
+    def close(self):
+        super().close()
+
+    def InitializeMenu(self):
+        self.menuBar = self.menuBar()
+        self.fileMenu = QMenu('File')
+        self.menuBar.addMenu(self.fileMenu)
+        self.defaultPath = QAction('Default Path')
+        self.fileMenu.addAction(self.defaultPath)
+        self.defaultPath.triggered.connect(self.DefaultPathDialog)
+        
+    def DefaultPathDialog(self):
+        dialog = QDialog(self)
+        dialog.setWindowTitle('Text Input')
+        layout = QVBoxLayout()
+
+        # create text input
+        text_input = QLineEdit()
+        layout.addWidget(text_input)
+
+        # create OK button
+        ok_button = QPushButton('OK')
+        ok_button.clicked.connect(dialog.accept)
+        layout.addWidget(ok_button)
+        dialog.setLayout(layout)
+        dialog.exec()
+
+        # create file path
+        file_path = os.path.join(documents_dir, "MotionTracker")
+        # write data to file
+        if text_input.text():
+            with open(file_path, "w") as f:
+                    f.write(text_input.text())
+                    print("File saved to:", file_path)
+    def resizeLol(self, yuh):
+        self.setMinimumSize(825, 150)
+        self.resize(825, 150)
+
+class CustomWidget(QWidget):
+    resized = pyqtSignal()
+    valueChanged = pyqtSignal()
+    closed = pyqtSignal()
+    def closeEvent(self, event):
+        self.closed.emit()
+        super().closeEvent(event)
+
+
+    def __init__(self, mainWindowParent):
+        super().__init__()
+
+        self.mainWindowParent = mainWindowParent
         self.filename = ''
         self.setWindowTitle("Motion Tracker")
         # File
@@ -48,38 +109,6 @@ class MainWindow(QWidget):
         self.Form.addRow(self.logo)
         self.Form.addRow(self.h_layout)
         self.setLayout(self.Form)
-
-    def InitializeMenu(self):
-        self.menuBar = QMenuBar()
-        self.fileMenu = QMenu('File')
-        self.menuBar.addMenu(self.fileMenu)
-        self.defaultPath = QAction('Default Path')
-        self.fileMenu.addAction(self.defaultPath)
-        self.defaultPath.triggered.connect(self.DefaultPathDialog)
-        
-    def DefaultPathDialog(self):
-        dialog = QDialog(self)
-        dialog.setWindowTitle('Text Input')
-        layout = QVBoxLayout()
-
-        # create text input
-        text_input = QLineEdit()
-        layout.addWidget(text_input)
-
-        # create OK button
-        ok_button = QPushButton('OK')
-        ok_button.clicked.connect(dialog.accept)
-        layout.addWidget(ok_button)
-        dialog.setLayout(layout)
-        dialog.exec()
-
-        # create file path
-        file_path = os.path.join(documents_dir, "MotionTracker")
-
-        # write data to file
-        with open(file_path, "w") as f:
-            f.write(text_input.text())
-        print("File saved to:", file_path)
 
     def getfile(self):
         file_name = "MotionTracker"
@@ -198,7 +227,7 @@ class MainWindow(QWidget):
     def resizeEvent(self, event):
         self.resized.emit()
         self.setFixedSize(event.size())
-        super(MainWindow, self).resizeEvent(event)
+        super(CustomWidget, self).resizeEvent(event)
     def handleBoundValueChanged(self):
         self.valueChanged.emit()
     @pyqtSlot(result=list)
@@ -238,8 +267,10 @@ class MainWindow(QWidget):
         self.Form.addRow(progressLabelRow)
         self.setMinimumSize(825, 150)
         self.resize(825, 150)
+        self.mainWindowParent.resizeLol(self.mainWindowParent)
         
         QApplication.processEvents()
+        print(fileName, progressBar, outputfps, rescaleRatio, xlb, xub, ylb, yub)
         tracker.processVideo(fileName, progressBar, outputfps, rescaleRatio, xlb, xub, ylb, yub)
         self.close()
 
