@@ -184,12 +184,13 @@ class CustomWidget(QWidget):
                 lines.append('')
             with open(file_path, "w") as f:
                 if (sys.platform == 'win32'):
-                    lines[1] = documents_dir + '\MotionTracker\\'
+                    lines[1] = documents_dir + '\MotionTracker'
                 else:
-                    lines[1] = documents_dir + '/MotionTracker/'
+                    lines[1] = documents_dir + '/MotionTracker'
                 for line in lines:
                     f.write(f'{line.strip()}' +'\n')
             self.outputPath = lines[1].rstrip('\n')
+            self.outputPath += '/'
         if not os.path.exists(self.outputPath):
             os.makedirs(self.outputPath)
 
