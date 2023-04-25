@@ -41,11 +41,4 @@ exe = EXE(
     target_arch=None,
     codesign_identity=None,
     entitlements_file=None,
-    icon=['SalvageLogo.icns'],
-)
-app = BUNDLE(
-    exe,
-    name='MotionTracker.app',
-    icon='SalvageLogo.icns',
-    bundle_identifier=None,
 )

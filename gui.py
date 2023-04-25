@@ -66,7 +66,7 @@ class MainWindow(QMainWindow):
         layout.addWidget(ok_button)
         dialog.setLayout(layout)
         # create file path
-        file_path = os.path.join(documents_dir, "MotionTracker")
+        file_path = os.path.join(documents_dir, "MotionTracker.conf")
         if os.path.exists(file_path):
             with open (file_path,"r") as rf:
                 firstline = rf.readline()
@@ -102,7 +102,7 @@ class MainWindow(QMainWindow):
         layout.addWidget(ok_button)
         dialog.setLayout(layout)
         # create file path
-        file_path = os.path.join(documents_dir, "MotionTracker")
+        file_path = os.path.join(documents_dir, "MotionTracker.conf")
         if os.path.exists(file_path):
             with open (file_path,"r") as rf:
                 rf.readline()
@@ -165,8 +165,31 @@ class CustomWidget(QWidget):
         self.Form.addRow(self.h_layout)
         self.setLayout(self.Form)
 
+        lines = []
+        self.outputPath = ''
+        file_path = os.path.join(documents_dir, 'MotionTracker.conf')
+        if os.path.exists(file_path):
+            with open(file_path, 'r') as f:
+                lines = f.readlines()
+        if len(lines) >= 2:
+            self.outputPath = lines[1].rstrip('\n')
+        else:
+            while len(lines) < 2:
+                lines.append('')
+            with open(file_path, "w") as f:
+                if (sys.platform == 'win32'):
+                    lines[1] = documents_dir + '\MotionTracker\\'
+                else:
+                    lines[1] = documents_dir + '/MotionTracker\\'
+                for line in lines:
+                    f.write(f'{line.strip()}' +'\n')
+            self.outputPath = lines[1].rstrip('\n')
+        if not os.path.exists(self.outputPath):
+            os.makedirs(self.outputPath)
+
+
     def getfile(self):
-        file_name = "MotionTracker"
+        file_name = "MotionTracker.conf"
         file_dialog = QFileDialog(self, 'Open File')
         if os.path.exists(os.path.join(documents_dir, file_name)):
             with open(os.path.join(documents_dir, file_name)) as f:
@@ -326,12 +349,13 @@ class CustomWidget(QWidget):
         
         QApplication.processEvents()
         print(fileName, progressBar, outputfps, rescaleRatio, xlb, xub, ylb, yub)
-        tracker.processVideo(fileName, progressBar, outputfps, rescaleRatio, xlb, xub, ylb, yub)
+        tracker.processVideo(fileName, progressBar, outputfps, rescaleRatio, xlb, xub, ylb, yub, self.outputPath)
+        os.startfile(os.path.realpath(self.outputPath))
         self.close()
 
 if __name__ == "__main__":
     #NEEDED FOR PYINSTALLER if not build/dist comment out
-    #os.chdir(sys._MEIPASS)
+    # os.chdir(sys._MEIPASS)
     app = QApplication(sys.argv)
     window = MainWindow()
     window.show()

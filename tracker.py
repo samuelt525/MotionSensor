@@ -17,7 +17,7 @@ def getVideoBounds(filepath):
     return frame_width, frame_height, fps
 
 
-def processVideo(filepath, progressBar, outputFPS, rescaleRatio, userXLB, userXUB, userYLB, userYUB):
+def processVideo(filepath, progressBar, outputFPS, rescaleRatio, userXLB, userXUB, userYLB, userYUB, outputPath):
 
     # Open the video file
     cap = cv2.VideoCapture(filepath)
@@ -38,7 +38,8 @@ def processVideo(filepath, progressBar, outputFPS, rescaleRatio, userXLB, userXU
     # print(f'total pixels = {width*height}, motion_threshold={0}')
 
     # Create a video writer object to output the processed video
-    out = cv2.VideoWriter('output_video.mp4', cv2.VideoWriter_fourcc(*'mp4v'), desired_fps, (width, height))
+    out = cv2.VideoWriter(outputPath + 'output_video.mp4', cv2.VideoWriter_fourcc(*'mp4v'), desired_fps, (width, height))
+    print(outputPath + 'output_video.mp4')
 
     # Initialize variables for motion detection
     no_motion_frames = 0
