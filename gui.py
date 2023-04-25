@@ -2,21 +2,142 @@ import math
 import sys
 import os
 import tracker
-import subprocess
-import copy
 from PyQt6.QtCore import QSize, Qt, QUrl, pyqtSlot, pyqtSignal
 from PyQt6.QtMultimedia import QMediaPlayer
 from PyQt6.QtQuickWidgets import QQuickWidget
-from PyQt6.QtWidgets import QApplication, QPushButton, QFileDialog, QLineEdit, QFormLayout, QWidget, QWidgetItem, QGroupBox, QHBoxLayout, QLabel, QSpinBox, QSlider, QProgressBar, QRadioButton
-from PyQt6.QtGui import QPixmap
+from PyQt6.QtWidgets import (QApplication, QMainWindow, QPushButton, QDialog, QVBoxLayout, QMenu, 
+                             QFileDialog, QLineEdit, QFormLayout, QWidget, QHBoxLayout, 
+                             QLabel, QSpinBox, QSlider, QProgressBar, QRadioButton)
+from PyQt6.QtGui import QPixmap, QAction
 
-class MainWindow(QWidget):
-    # for qml video player resizing with window size; commented out due to segmentation fault error on mac
-    resized = pyqtSignal()
-    valueChanged = pyqtSignal()
+documents_dir = ''
+if (sys.platform == 'win32'):
+    documents_dir = os.getenv('USERPROFILE') + '\Documents'
+else:
+    documents_dir = os.path.expanduser("~/Documents")
+
+class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
 
+        
+        self.InitializeMenu()
+
+        # Create a QWidget and set its layout
+        self.widget = CustomWidget(self)
+        self.setCentralWidget(self.widget)
+        
+        # Set the window title and show the window
+        self.setWindowTitle('Main Window')
+        self.show()
+        self.widget.closed.connect(self.close)
+
+    def close(self):
+        super().close()
+
+
+    def InitializeMenu(self):
+        self.menuBar = self.menuBar()
+        self.fileMenu = QMenu('File')
+        self.menuBar.addMenu(self.fileMenu)
+
+        self.defaultVideoPath = QAction('Default Input Video Path')
+        self.fileMenu.addAction(self.defaultVideoPath)
+        self.defaultVideoPath.triggered.connect(self.DefaultInputPathDialog)
+
+        self.defaultOutputPath = QAction('Default Output Video Path')
+        self.fileMenu.addAction(self.defaultOutputPath)
+        self.defaultOutputPath.triggered.connect(self.DefaultOutputPathDialog)
+        
+    def DefaultInputPathDialog(self):
+        dialog = QDialog(self)
+        dialog.setWindowTitle('Text Input')
+        layout = QVBoxLayout()
+
+        # create text input
+        text_label = QLabel('Enter Input Video Path')
+        text_input = QLineEdit()
+        layout.addWidget(text_label)
+        layout.addWidget(text_input)
+
+        # create OK button
+        ok_button = QPushButton('OK')
+        ok_button.clicked.connect(dialog.accept)
+        layout.addWidget(ok_button)
+        dialog.setLayout(layout)
+        # create file path
+        file_path = os.path.join(documents_dir, "MotionTracker")
+        if os.path.exists(file_path):
+            with open (file_path,"r") as rf:
+                firstline = rf.readline()
+                text_input.setText(firstline)
+        accept = dialog.exec()
+
+        if accept and text_input.text():
+                lines = ['', '']
+                print(text_input.text())
+                if os.path.exists(file_path):
+                    with open(file_path, 'r') as f:
+                        lines = f.readlines()
+                with open(file_path, "w") as f:
+                    lines[0] = text_input.text()
+                    for line in lines:
+                        f.write(f'{line.strip()}' +'\n')
+                print("File saved to:", file_path)
+
+    def DefaultOutputPathDialog(self):
+        dialog = QDialog(self)
+        dialog.setWindowTitle('Text Input')
+        layout = QVBoxLayout()
+
+        # create text input
+        text_label = QLabel('Enter Output Video Path')
+        text_input = QLineEdit()
+        layout.addWidget(text_label)
+        layout.addWidget(text_input)
+
+        # create OK button
+        ok_button = QPushButton('OK')
+        ok_button.clicked.connect(dialog.accept)
+        layout.addWidget(ok_button)
+        dialog.setLayout(layout)
+        # create file path
+        file_path = os.path.join(documents_dir, "MotionTracker")
+        if os.path.exists(file_path):
+            with open (file_path,"r") as rf:
+                rf.readline()
+                secondline = rf.readline()
+                text_input.setText(secondline)
+        accept = dialog.exec()
+
+        if accept and text_input.text():
+                lines = ['', '']
+                if os.path.exists(file_path):
+                    with open(file_path, 'r') as f:
+                        lines = f.readlines()
+                with open(file_path, "w") as f:
+                        lines[1] = text_input.text()
+                        for line in lines:
+                            f.write(f'{line.strip()}' +'\n')
+                print("File saved to:", file_path)
+
+    def resizeLol(self, yuh):
+        self.setMinimumSize(825, 150)
+        self.resize(825, 150)
+
+class CustomWidget(QWidget):
+    resized = pyqtSignal()
+    valueChanged = pyqtSignal()
+    closed = pyqtSignal()
+    def closeEvent(self, event):
+        self.closed.emit()
+        super().closeEvent(event)
+
+
+    def __init__(self, mainWindowParent):
+        super().__init__()
+
+        self.mainWindowParent = mainWindowParent
         self.filename = ''
         self.setWindowTitle("Motion Tracker")
         # File
@@ -45,7 +166,17 @@ class MainWindow(QWidget):
         self.setLayout(self.Form)
 
     def getfile(self):
-        self.filename = QFileDialog.getOpenFileUrl(self, 'Open file')
+        file_name = "MotionTracker"
+        file_dialog = QFileDialog(self, 'Open File')
+        if os.path.exists(os.path.join(documents_dir, file_name)):
+            with open(os.path.join(documents_dir, file_name)) as f:
+                path = f.readline()
+            file_dialog.setDirectory(path)
+            self.filename = file_dialog.getOpenFileName()
+        else:
+            self.filename = file_dialog.getOpenFileName()
+        if self.filename[0] == '':
+            exit()
         self.filebutton.hide()
         self.logo.hide()
         self.initializeForm()
@@ -58,7 +189,7 @@ class MainWindow(QWidget):
         self.submissionbutton = QPushButton('Submit')
         self.submissionbutton.clicked.connect(self.processVideo)
 
-        self.frame_width, self.frame_height, fps  = tracker.getVideoBounds(self.filename[0].path())
+        self.frame_width, self.frame_height, fps  = tracker.getVideoBounds(self.filename[0])
 
         self.rescaleRatio = QLineEdit()
         self.outputfps = QSpinBox()
@@ -137,7 +268,7 @@ class MainWindow(QWidget):
         self.resize(self.width, self.height)
 
         self.player = self.view.rootObject().findChild(QMediaPlayer, "player")
-        self.player.setProperty('source', self.filename[0].path())
+        self.player.setProperty('source', self.filename[0])
         self.player.setLoops(self.player.Loops.Infinite)
         self.player.play() 
 
@@ -151,7 +282,7 @@ class MainWindow(QWidget):
     def resizeEvent(self, event):
         self.resized.emit()
         self.setFixedSize(event.size())
-        super(MainWindow, self).resizeEvent(event)
+        super(CustomWidget, self).resizeEvent(event)
     def handleBoundValueChanged(self):
         self.valueChanged.emit()
     @pyqtSlot(result=list)
@@ -162,7 +293,7 @@ class MainWindow(QWidget):
         return [self.frame_width, self.frame_height]
 
     def processVideo(self):
-        fileName = self.filename[0].path()
+        fileName = self.filename[0]
         outputfps = self.outputfps.value()
         rescaleRatio = int(self.rescaleRatio.text())
         xlb = self.userXLB.value() 
@@ -191,7 +322,10 @@ class MainWindow(QWidget):
         self.Form.addRow(progressLabelRow)
         self.setMinimumSize(825, 150)
         self.resize(825, 150)
+        self.mainWindowParent.resizeLol(self.mainWindowParent)
         
+        QApplication.processEvents()
+        print(fileName, progressBar, outputfps, rescaleRatio, xlb, xub, ylb, yub)
         tracker.processVideo(fileName, progressBar, outputfps, rescaleRatio, xlb, xub, ylb, yub)
         self.close()
 
