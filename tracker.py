@@ -64,7 +64,7 @@ def processVideo(filepath, progressBar, outputFPS, rescaleRatio, userXLB, userXU
             continue
         
         progress_index += 1
-        #progressBar.setValue(int(100 * progress_index / total_frames))
+        progressBar.setValue(int(100 * progress_index / total_frames))
         
         frame = cv2.resize(frame, (int(width*scale_factor), int(height*scale_factor)))
         
