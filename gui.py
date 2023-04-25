@@ -195,9 +195,9 @@ class CustomWidget(QWidget):
             with open(os.path.join(documents_dir, file_name)) as f:
                 path = f.readline()
             file_dialog.setDirectory(path)
-            self.filename = file_dialog.getOpenFileName()
+            self.filename = file_dialog.getOpenFileNames()
         else:
-            self.filename = file_dialog.getOpenFileName()
+            self.filename = file_dialog.getOpenFileNames()
         if self.filename[0] == '':
             exit()
         self.filebutton.hide()
@@ -206,13 +206,15 @@ class CustomWidget(QWidget):
         self.formInitialized = True
 
     def initializeForm(self):
+
+        filename = self.filename[0][0]
         if self.formInitialized:
             return
 
         self.submissionbutton = QPushButton('Submit')
         self.submissionbutton.clicked.connect(self.processVideo)
 
-        self.frame_width, self.frame_height, fps  = tracker.getVideoBounds(self.filename[0])
+        self.frame_width, self.frame_height, fps  = tracker.getVideoBounds(filename)
 
         self.rescaleRatio = QLineEdit()
         self.outputfps = QSpinBox()
@@ -291,7 +293,7 @@ class CustomWidget(QWidget):
         self.resize(self.width, self.height)
 
         self.player = self.view.rootObject().findChild(QMediaPlayer, "player")
-        self.player.setProperty('source', self.filename[0])
+        self.player.setProperty('source', filename)
         self.player.setLoops(self.player.Loops.Infinite)
         self.player.play() 
 
@@ -316,7 +318,6 @@ class CustomWidget(QWidget):
         return [self.frame_width, self.frame_height]
 
     def processVideo(self):
-        fileName = self.filename[0]
         outputfps = self.outputfps.value()
         rescaleRatio = int(self.rescaleRatio.text())
         xlb = self.userXLB.value() 
@@ -348,8 +349,12 @@ class CustomWidget(QWidget):
         self.mainWindowParent.resizeLol(self.mainWindowParent)
         
         QApplication.processEvents()
-        print(fileName, progressBar, outputfps, rescaleRatio, xlb, xub, ylb, yub)
-        tracker.processVideo(fileName, progressBar, outputfps, rescaleRatio, xlb, xub, ylb, yub, self.outputPath)
+
+        counter = 1
+        for filename in self.filename[0]:
+            print(filename, progressBar, outputfps, rescaleRatio, xlb, xub, ylb, yub)
+            tracker.processVideo(filename, progressBar, outputfps, rescaleRatio, xlb, xub, ylb, yub,counter, self.outputPath)
+            counter += 1
         os.startfile(os.path.realpath(self.outputPath))
         self.close()
 
