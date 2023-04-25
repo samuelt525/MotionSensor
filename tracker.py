@@ -2,6 +2,13 @@ import cv2
 import math
 import os
 
+# import sys
+# from PyQt6.QtCore import QSize, Qt, QUrl, pyqtSlot, pyqtSignal
+# from PyQt6.QtMultimedia import QMediaPlayer
+# from PyQt6.QtQuickWidgets import QQuickWidget
+# from PyQt6.QtWidgets import QApplication, QPushButton, QFileDialog, QLineEdit, QFormLayout, QWidget, QWidgetItem, QGroupBox, QHBoxLayout, QLabel, QSpinBox, QSlider, QProgressBar, QRadioButton
+# from PyQt6.QtGui import QPixmap
+
 if os.path.exists("./output_video.mp4"):
     os.remove("./output_video.mp4")
 if os.path.exists("./skip_output_video.mp4"):
@@ -100,3 +107,24 @@ def processVideo(filepath, progressBar, outputFPS, rescaleRatio, userXLB, userXU
 if __name__ == '__main__': 
     prog_bar = 0
     processVideo("/Users/humaid/Documents/seniordesign/code/main/MotionTracker54/C0078_720p60_40s.mp4", prog_bar, 60, 100, 0, 2160, 0, 3840)
+# if __name__ == '__main__': 
+
+#     # Create a new application instance
+#     app = QApplication(sys.argv)
+
+#     # Create a new window
+#     window = QWidget()
+
+#     # Set the window properties
+#     window.setWindowTitle("My PyQT6 Application")
+#     window.setGeometry(100, 100, 400, 300)
+
+#     # Show the window
+#     window.show()
+#     prog_bar = QProgressBar()
+#     processVideo("/Users/humaid/Documents/seniordesign/code/main/MotionTracker54/C0078_720p60_40s.mp4", prog_bar, 60, 100, 0, 2160, 0, 3840)
+
+#     # Start the event loop
+#     sys.exit(app.exec())
+
+
