@@ -165,12 +165,18 @@ class CustomWidget(QWidget):
         self.Form.addRow(self.h_layout)
         self.setLayout(self.Form)
 
+        self.getOutputPath()
+
+    def getOutputPath(self):
         lines = []
         self.outputPath = ''
         file_path = os.path.join(documents_dir, 'MotionTracker.conf')
         if os.path.exists(file_path):
             with open(file_path, 'r') as f:
                 lines = f.readlines()
+        else:
+            with open(file_path, 'w') as f:
+                f.write('')
         if len(lines) >= 2:
             self.outputPath = lines[1].rstrip('\n')
         else:
@@ -178,15 +184,15 @@ class CustomWidget(QWidget):
                 lines.append('')
             with open(file_path, "w") as f:
                 if (sys.platform == 'win32'):
-                    lines[1] = documents_dir + '\MotionTracker\\'
+                    lines[1] = documents_dir + '\MotionTracker'
                 else:
-                    lines[1] = documents_dir + '/MotionTracker\\'
+                    lines[1] = documents_dir + '/MotionTracker'
                 for line in lines:
                     f.write(f'{line.strip()}' +'\n')
             self.outputPath = lines[1].rstrip('\n')
+            self.outputPath += '/'
         if not os.path.exists(self.outputPath):
             os.makedirs(self.outputPath)
-
 
     def getfile(self):
         file_name = "MotionTracker.conf"
@@ -318,6 +324,7 @@ class CustomWidget(QWidget):
         return [self.frame_width, self.frame_height]
 
     def processVideo(self):
+        self.getOutputPath()
         outputfps = self.outputfps.value()
         rescaleRatio = int(self.rescaleRatio.text())
         xlb = self.userXLB.value() 
@@ -355,7 +362,7 @@ class CustomWidget(QWidget):
             print(filename, progressBar, outputfps, rescaleRatio, xlb, xub, ylb, yub)
             tracker.processVideo(filename, progressBar, outputfps, rescaleRatio, xlb, xub, ylb, yub, counter, self.outputPath)
             counter += 1
-        os.startfile(os.path.realpath(self.outputPath))
+        #os.startfile(os.path.realpath(self.outputPath))
         self.close()
 
 if __name__ == "__main__":
