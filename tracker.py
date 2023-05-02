@@ -51,7 +51,7 @@ def processVideo(filepath, progressBar, outputFPS, rescaleRatio, userXLB, userXU
 
     # Initialize variables for motion detection
     no_motion_frames = 0
-    scale_factor = min(1280/width, 720/height)
+    scale_factor = 1 #TODO 
 
     # Create a background subtractor object
     back_sub = cv2.createBackgroundSubtractorMOG2()
@@ -109,7 +109,7 @@ def processVideo(filepath, progressBar, outputFPS, rescaleRatio, userXLB, userXU
 if __name__ == '__main__': 
     prog_bar = 0
     #processVideo("/Users/humaid/Documents/seniordesign/code/main/MotionTracker54/C0078_clip1min.mp4", prog_bar, 60, 100, 0, 2160, 0, 3840, 0, "/Users/humaid/Documents/seniordesign/code/main/MotionTracker54/C0078_clip1min")
-    #processVideo("/Users/samueltsui/Documents/GitHub/MotionSensor/video-compression/C0078_clip1min60fps.mp4", prog_bar, 60, 100, 0, 2160, 0, 3840, "/Users/samueltsui/Documents/MotionTracker")
+    processVideo("/Users/samueltsui/Documents/GitHub/MotionSensor/video-compression/C0078_clip1min60fps.mp4", prog_bar, 60, 100, 0, 2160, 0, 3840, "/Users/samueltsui/Desktop")
 
 # if __name__ == '__main__': 
 
