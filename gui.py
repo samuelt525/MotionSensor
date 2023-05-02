@@ -223,7 +223,7 @@ class CustomWidget(QWidget):
         self.frame_width, self.frame_height, fps  = tracker.getVideoBounds(filename)
 
         self.rescaleRatio = QLineEdit()
-        self.outputfps = QSpinBox()
+        self.outputfps = QLineEdit()
         self.firstRow = QHBoxLayout()
 
         self.rescaleRatioLabel = QLabel("Rescale Ratio: ")
@@ -232,7 +232,7 @@ class CustomWidget(QWidget):
         self.rescaleRatio.setText("100")
         self.outputfpsLabel = QLabel("Output FPS:")
         self.firstRow.addWidget(self.outputfpsLabel)
-        self.outputfps.setValue(int(fps))
+        self.outputfps.setText(str(int(math.ceil(fps))))
         # self.outputfps.setMaximum(int(math.ceil(fps)))
         self.firstRow.addWidget(self.outputfps)
         self.Form.addRow(self.firstRow)
@@ -325,7 +325,7 @@ class CustomWidget(QWidget):
 
     def processVideo(self):
         self.getOutputPath()
-        outputfps = self.outputfps.value()
+        outputfps = int(self.outputfps.text())
         rescaleRatio = int(self.rescaleRatio.text())
         xlb = self.userXLB.value() 
         xub = self.userXUB.value() 
