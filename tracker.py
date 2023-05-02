@@ -24,7 +24,7 @@ def getVideoBounds(filepath):
     return frame_width, frame_height, fps
 
 
-def processVideo(filepath, progressBar, outputFPS, rescaleRatio, userXLB, userXUB, userYLB, userYUB, counter, outputPath):
+def processVideo(filepath, progressBar, outputFPS, rescaleRatio, userXLB, userXUB, userYLB, userYUB, outputPath):
 
     # Open the video file
     cap = cv2.VideoCapture(filepath)
@@ -45,7 +45,7 @@ def processVideo(filepath, progressBar, outputFPS, rescaleRatio, userXLB, userXU
     # print(f'total pixels = {width*height}, motion_threshold={0}')
 
     # Create a video writer object to output the processed video
-    out = cv2.VideoWriter(outputPath + 'output_video' + str(counter) + '.mp4', cv2.VideoWriter_fourcc(*'mp4v'), desired_fps, (width, height))
+    out = cv2.VideoWriter(outputPath + '_output' + '.mp4', cv2.VideoWriter_fourcc(*'mp4v'), desired_fps, (width, height))
 
     # Initialize variables for motion detection
     no_motion_frames = 0
@@ -106,7 +106,8 @@ def processVideo(filepath, progressBar, outputFPS, rescaleRatio, userXLB, userXU
 
 if __name__ == '__main__': 
     prog_bar = 0
-    processVideo("/Users/humaid/Documents/seniordesign/code/main/MotionTracker54/C0078_720p60_40s.mp4", prog_bar, 60, 100, 0, 2160, 0, 3840)
+    processVideo("/Users/humaid/Documents/seniordesign/code/main/MotionTracker54/C0078_clip1min.mp4", prog_bar, 60, 100, 0, 2160, 0, 3840, 0, "/Users/humaid/Documents/seniordesign/code/main/MotionTracker54/C0078_clip1min")
+
 # if __name__ == '__main__': 
 
 #     # Create a new application instance
