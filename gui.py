@@ -359,8 +359,8 @@ class CustomWidget(QWidget):
 
         counter = 1
         for filename in self.filename[0]:
-            print(filename, progressBar, outputfps, rescaleRatio, xlb, xub, ylb, yub)
-            tracker.processVideo(filename, progressBar, outputfps, rescaleRatio, xlb, xub, ylb, yub, counter, self.outputPath)
+            print(filename, progressBar, outputfps, rescaleRatio, xlb, xub, ylb, yub, self.outputPath)
+            tracker.processVideo(filename, progressBar, outputfps, rescaleRatio, xlb, xub, ylb, yub, self.outputPath)
             counter += 1
         #os.startfile(os.path.realpath(self.outputPath))
         self.close()

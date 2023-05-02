@@ -44,8 +44,10 @@ def processVideo(filepath, progressBar, outputFPS, rescaleRatio, userXLB, userXU
     motion_stats = []
     # print(f'total pixels = {width*height}, motion_threshold={0}')
 
-    # Create a video writer object to output the processed video
-    out = cv2.VideoWriter(outputPath + '_output' + '.mp4', cv2.VideoWriter_fourcc(*'mp4v'), desired_fps, (width, height))
+    filename = filepath.split('/')
+    filename = filename[-1]
+    # Create a video writer object image.pngto output the processed video
+    out = cv2.VideoWriter(outputPath + '/' + filename, cv2.VideoWriter_fourcc(*'mp4v'), desired_fps, (width, height))
 
     # Initialize variables for motion detection
     no_motion_frames = 0
@@ -106,7 +108,8 @@ def processVideo(filepath, progressBar, outputFPS, rescaleRatio, userXLB, userXU
 
 if __name__ == '__main__': 
     prog_bar = 0
-    processVideo("/Users/humaid/Documents/seniordesign/code/main/MotionTracker54/C0078_clip1min.mp4", prog_bar, 60, 100, 0, 2160, 0, 3840, 0, "/Users/humaid/Documents/seniordesign/code/main/MotionTracker54/C0078_clip1min")
+    #processVideo("/Users/humaid/Documents/seniordesign/code/main/MotionTracker54/C0078_clip1min.mp4", prog_bar, 60, 100, 0, 2160, 0, 3840, 0, "/Users/humaid/Documents/seniordesign/code/main/MotionTracker54/C0078_clip1min")
+    #processVideo("/Users/samueltsui/Documents/GitHub/MotionSensor/video-compression/C0078_clip1min60fps.mp4", prog_bar, 60, 100, 0, 2160, 0, 3840, "/Users/samueltsui/Documents/MotionTracker")
 
 # if __name__ == '__main__': 
 
