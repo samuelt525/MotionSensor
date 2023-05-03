@@ -31,7 +31,6 @@ def processVideo(filepath, progressBar, outputFPS, rescaleRatio, userXLB, userXU
     
     # Get the video properties
     total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
-    # print(total_frames)
     fps = int(cap.get(cv2.CAP_PROP_FPS))
     width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
     height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
@@ -43,15 +42,20 @@ def processVideo(filepath, progressBar, outputFPS, rescaleRatio, userXLB, userXU
     motion_threshold = 0.05 * (height * width)
     motion_stats = []
     # print(f'total pixels = {width*height}, motion_threshold={0}')
+    # Initialize variables for motion detection
+    no_motion_frames = 0
+    
+    scale_factor = 100
+    if rescaleRatio in range(1, 101):
+        scale_factor = rescaleRatio
+    else:
+        raise ValueError("Value is out of range (1-100)")
 
     filename = filepath.split('/')
     filename = filename[-1]
     # Create a video writer object image.pngto output the processed video
-    out = cv2.VideoWriter(outputPath + '/' + filename, cv2.VideoWriter_fourcc(*'mp4v'), desired_fps, (width, height))
-
-    # Initialize variables for motion detection
-    no_motion_frames = 0
-    scale_factor = 1 #TODO 
+    out = cv2.VideoWriter(outputPath + '/' + filename, cv2.VideoWriter_fourcc(*'mp4v'), desired_fps, (int(width * scale_factor / 100), int(height * scale_factor / 100)))
+    # out = cv2.VideoWriter(outputPath, cv2.VideoWriter_fourcc(*'mp4v'), desired_fps, (int(width * scale_factor / 100), int(height * scale_factor / 100)))
 
     # Create a background subtractor object
     back_sub = cv2.createBackgroundSubtractorMOG2()
@@ -68,7 +72,7 @@ def processVideo(filepath, progressBar, outputFPS, rescaleRatio, userXLB, userXU
         progress_index += 1
         progressBar.setValue(int(100 * progress_index / total_frames))
         
-        frame = cv2.resize(frame, (int(width*scale_factor), int(height*scale_factor)))
+        frame = cv2.resize(frame, (math.ceil(width * scale_factor / 100), math.ceil(height * scale_factor / 100)))
         
         # Apply background subtraction to the current frame
         fg_mask = back_sub.apply(frame)
@@ -83,11 +87,6 @@ def processVideo(filepath, progressBar, outputFPS, rescaleRatio, userXLB, userXU
         # If there is motion in the frame, reset the no motion frames counter
         if motion_count > 14000:
             no_motion_frames = 0
-            # # Draw a rectangle around the areas with motion
-            # contours, hierarchy = cv2.findContours(fg_mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-            # for contour in contours:
-            #     x, y, w, h = cv2.boundingRect(contour)
-            #     cv2.rectangle(frame, (x, y), (x+w, y+h), (0, 0, 255), 2)
         else:
             no_motion_frames += 1
 
@@ -108,8 +107,21 @@ def processVideo(filepath, progressBar, outputFPS, rescaleRatio, userXLB, userXU
 
 if __name__ == '__main__': 
     prog_bar = 0
-    #processVideo("/Users/humaid/Documents/seniordesign/code/main/MotionTracker54/C0078_clip1min.mp4", prog_bar, 60, 100, 0, 2160, 0, 3840, 0, "/Users/humaid/Documents/seniordesign/code/main/MotionTracker54/C0078_clip1min")
-    processVideo("/Users/samueltsui/Documents/GitHub/MotionSensor/video-compression/C0078_clip1min60fps.mp4", prog_bar, 60, 100, 0, 2160, 0, 3840, "/Users/samueltsui/Desktop")
+    processVideo("/Users/humaid/Documents/seniordesign/code/main/MotionTracker54/C0078_clip10sec.mp4", prog_bar, 120, 50, 0, 2160, 0, 3840, "/Users/humaid/Documents/seniordesign/code/main/MotionTracker54/C0078_clip10sec-output.mp4")
+    # processVideo("/Users/samueltsui/Documents/GitHub/MotionSensor/video-compression/C0078_clip1min60fps.mp4", prog_bar, 60, 100, 0, 2160, 0, 3840, "/Users/samueltsui/Desktop")
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 # if __name__ == '__main__': 
 
