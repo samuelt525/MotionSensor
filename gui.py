@@ -165,35 +165,6 @@ class CustomWidget(QWidget):
         self.Form.addRow(self.h_layout)
         self.setLayout(self.Form)
 
-        self.getOutputPath()
-
-    def getOutputPath(self):
-        lines = []
-        self.outputPath = ''
-        file_path = os.path.join(documents_dir, 'MotionTracker.conf')
-        if os.path.exists(file_path):
-            with open(file_path, 'r') as f:
-                lines = f.readlines()
-        else:
-            with open(file_path, 'w') as f:
-                f.write('')
-        if len(lines) >= 2:
-            self.outputPath = lines[1].rstrip('\n')
-        else:
-            while len(lines) < 2:
-                lines.append('')
-            with open(file_path, "w") as f:
-                if (sys.platform == 'win32'):
-                    lines[1] = documents_dir + '\MotionTracker'
-                else:
-                    lines[1] = documents_dir + '/MotionTracker'
-                for line in lines:
-                    f.write(f'{line.strip()}' +'\n')
-            self.outputPath = lines[1].rstrip('\n')
-            self.outputPath += '/'
-        if not os.path.exists(self.outputPath):
-            os.makedirs(self.outputPath)
-
     def getfile(self):
         file_name = "MotionTracker.conf"
         file_dialog = QFileDialog(self, 'Open File')
@@ -212,8 +183,17 @@ class CustomWidget(QWidget):
         self.formInitialized = True
 
     def initializeForm(self):
-
         filename = self.filename[0][0]
+
+        filePath = ''
+        filePathArr = filename.split('/')
+        for f in range(0, len(filePathArr) - 1):
+            filePath += filePathArr[f] + '/'
+        outputPath = filePath
+        self.outputPathField = QLineEdit()
+        self.outputPathField.setText(outputPath)
+        self.outputPathFieldLabel = QLabel('Output Path: ')
+
         if self.formInitialized:
             return
 
@@ -241,7 +221,6 @@ class CustomWidget(QWidget):
         self.secondRow = QHBoxLayout()
         self.thirdRow = QHBoxLayout()
         self.fourthRow = QHBoxLayout()
-
 
         self.userYLBLabel = QLabel("Height Lower Bound:")
         self.secondRow.addWidget(self.userYLBLabel)
@@ -303,6 +282,9 @@ class CustomWidget(QWidget):
         self.player.setLoops(self.player.Loops.Infinite)
         self.player.play() 
 
+        self.Form.addWidget(self.outputPathFieldLabel)
+        self.Form.addWidget(self.outputPathField)
+
         self.Form.removeWidget(self.filebutton)
         self.Form.addRow(self.submissionbutton)
 
@@ -324,20 +306,22 @@ class CustomWidget(QWidget):
         return [self.frame_width, self.frame_height]
 
     def processVideo(self):
-        self.getOutputPath()
         outputfps = int(self.outputfps.text())
         rescaleRatio = int(self.rescaleRatio.text())
         xlb = self.userXLB.value() 
         xub = self.userXUB.value() 
         ylb = self.userYLB.value()
         yub = self.userYUB.value()
+        outputPath = self.outputPathField.text()
 
         self.Form.removeRow(self.firstRow)
         self.Form.removeRow(self.secondRow)
         self.Form.removeRow(self.thirdRow)
         self.Form.removeRow(self.fourthRow)
         self.Form.removeWidget(self.submissionbutton)
-        self.Form.removeRow(self.view) 
+        self.Form.removeRow(self.view)
+        self.Form.removeWidget(self.outputPathField)
+        self.Form.removeWidget(self.outputPathFieldLabel)
 
         progressBar = QProgressBar()
 
@@ -359,10 +343,10 @@ class CustomWidget(QWidget):
 
         counter = 1
         for filename in self.filename[0]:
-            print(filename, progressBar, outputfps, rescaleRatio, xlb, xub, ylb, yub, self.outputPath)
-            tracker.processVideo(filename, progressBar, outputfps, rescaleRatio, xlb, xub, ylb, yub, self.outputPath)
+            print(filename, progressBar, outputfps, rescaleRatio, xlb, xub, ylb, yub, outputPath)
+            tracker.processVideo(filename, progressBar, outputfps, rescaleRatio, xlb, xub, ylb, yub, outputPath)
             counter += 1
-        #os.startfile(os.path.realpath(self.outputPath))
+        #os.startfile(os.path.realpath(outputPath))
         self.close()
 
 if __name__ == "__main__":
