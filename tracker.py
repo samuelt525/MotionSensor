@@ -51,10 +51,10 @@ def processVideo(filepath, progressBar, outputFPS, rescaleRatio, userXLB, userXU
     else:
         raise ValueError("Value is out of range (1-100)")
 
-    filename = filepath.split('/')
-    filename = filename[-1]
+
+    filename = os.path.splitext(os.path.basename(filepath))[0]
     # Create a video writer object image.pngto output the processed video
-    out = cv2.VideoWriter(outputPath + '/' + filename, cv2.VideoWriter_fourcc(*'mp4v'), desired_fps, (int(width * scale_factor / 100), int(height * scale_factor / 100)))
+    out = cv2.VideoWriter(outputPath + '/' + filename + '-output.mp4', cv2.VideoWriter_fourcc(*'mp4v'), desired_fps, (int(width * scale_factor / 100), int(height * scale_factor / 100)))
     # out = cv2.VideoWriter(outputPath, cv2.VideoWriter_fourcc(*'mp4v'), desired_fps, (int(width * scale_factor / 100), int(height * scale_factor / 100)))
 
     # Create a background subtractor object
@@ -108,7 +108,7 @@ def processVideo(filepath, progressBar, outputFPS, rescaleRatio, userXLB, userXU
 if __name__ == '__main__': 
     prog_bar = 0
     processVideo("/Users/humaid/Documents/seniordesign/code/main/MotionTracker54/C0078_clip10sec.mp4", prog_bar, 120, 50, 0, 2160, 0, 3840, "/Users/humaid/Documents/seniordesign/code/main/MotionTracker54/C0078_clip10sec-output.mp4")
-    # processVideo("/Users/samueltsui/Documents/GitHub/MotionSensor/video-compression/C0078_clip1min60fps.mp4", prog_bar, 60, 100, 0, 2160, 0, 3840, "/Users/samueltsui/Desktop")
+    #processVideo("/Users/samueltsui/Documents/GitHub/MotionSensor/video-compression/C0078_clip1min60fps.mp4", prog_bar, 60, 100, 0, 2160, 0, 3840, "/Users/samueltsui/Desktop")
 
 
 
