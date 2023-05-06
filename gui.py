@@ -51,7 +51,7 @@ class MainWindow(QMainWindow):
         
     def DefaultInputPathDialog(self):
         dialog = QDialog(self)
-        dialog.setWindowTitle('Text Input')
+        dialog.setWindowTitle('Select Directory')
         layout = QVBoxLayout()
 
         # create text input
@@ -59,6 +59,11 @@ class MainWindow(QMainWindow):
         text_input = QLineEdit()
         layout.addWidget(text_label)
         layout.addWidget(text_input)
+
+        # create Select Directory button
+        select_button = QPushButton('Select Directory')
+        layout.addWidget(select_button)
+        select_button.clicked.connect(lambda: self.selectDirectory(text_input))
 
         # create OK button
         ok_button = QPushButton('OK')
@@ -85,6 +90,7 @@ class MainWindow(QMainWindow):
                         f.write(f'{line.strip()}' +'\n')
                 print("File saved to:", file_path)
 
+
     def DefaultOutputPathDialog(self):
         dialog = QDialog(self)
         dialog.setWindowTitle('Text Input')
@@ -95,6 +101,11 @@ class MainWindow(QMainWindow):
         text_input = QLineEdit()
         layout.addWidget(text_label)
         layout.addWidget(text_input)
+
+        # create Select Directory button
+        select_button = QPushButton('Select Directory')
+        layout.addWidget(select_button)
+        select_button.clicked.connect(lambda: self.selectDirectory(text_input))
 
         # create OK button
         ok_button = QPushButton('OK')
@@ -121,6 +132,12 @@ class MainWindow(QMainWindow):
                             f.write(f'{line.strip()}' +'\n')
                 print("File saved to:", file_path)
 
+    def selectDirectory(self, text_input):
+        directory_path = QFileDialog.getExistingDirectory(self, 'Select Directory')
+        directory_path = os.path.normpath(directory_path)
+        # For some reason the directory path becomes "." when hitting cancel in the file explorer window
+        if directory_path != "" and directory_path != ".":
+            text_input.setText(directory_path)
     def resizeLol(self, yuh):
         self.setMinimumSize(825, 150)
         self.resize(825, 150)
