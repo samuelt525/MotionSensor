@@ -1,14 +1,28 @@
 class Model:
     def __init__(self):
-        pass
-    '''
-        self.outputFPS = outputFPS
+        self.fileName = ''
+        self.outputfps = 0
+        self.rescaleRatio = 0
+        self.xlb = 0
+        self.xub = 0
+        self.ylb = 0
+        self.yub = 0 
+        self.outputPath = ''
+
+    def setFileName(self, filename):
+        self.fileName = filename
+    def setOutputfps(self, outputfps):
+        print(outputfps)
+        self.outputfps = outputfps
+    def setRescaleRatio(self, rescaleRatio):
+        print(rescaleRatio)
         self.rescaleRatio = rescaleRatio
-        self.filePath = filePath
-        self.XLB = userXLB 
-        self.XUB = userXUB
-        self.YLB = userYLB
-        self.YUB = userYUB
-        self.outputPath = outputPath
-    '''
+    def setxlb(self, xlb):
+        self.xlb = xlb
+    def setxub(self, xub):
+        self.xub = xub
+    def setylb(self, ylb):
+        self.ylb = ylb
+    def setyub(self, yub):
+        self.yub = yub
     

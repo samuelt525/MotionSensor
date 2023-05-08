@@ -10,11 +10,17 @@ from PyQt6.QtWidgets import (QApplication, QMainWindow, QPushButton, QDialog, QV
                              QLabel, QSpinBox, QSlider, QProgressBar, QRadioButton)
 from PyQt6.QtGui import QPixmap, QAction
 
+
+documents_dir = ''
+if (sys.platform == 'win32'):
+    documents_dir = os.getenv('USERPROFILE') + '\Documents'
+else:
+    documents_dir = os.path.expanduser("~/Documents")
+
+
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
-
-        
         self.InitializeMenu()
 
         # Create a QWidget and set its layout
@@ -24,39 +30,31 @@ class MainWindow(QMainWindow):
         # Set the window title and show the window
         self.setWindowTitle('Main Window')
         self.show()
-
     def InitializeMenu(self):
         self.menuBar = self.menuBar()
         self.fileMenu = QMenu('File')
         self.menuBar.addMenu(self.fileMenu)
 
-        self.defaultVideoPath = QAction('Default Input Video Path')
-        self.fileMenu.addAction(self.defaultVideoPath)
-        self.defaultVideoPath.triggered.connect(self.DefaultInputPathDialog)
-
-        self.defaultOutputPath = QAction('Default Output Video Path')
-        self.fileMenu.addAction(self.defaultOutputPath)
-        self.defaultOutputPath.triggered.connect(self.DefaultOutputPathDialog)
-
 class CustomWidget(QWidget):
     resized = pyqtSignal()
     valueChanged = pyqtSignal()
     closed = pyqtSignal()
+    selectFileSignal = pyqtSignal(list or int)
+    processFileSignal = pyqtSignal()
+    outputfpsSignal = pyqtSignal(str)
+    rescaleRatioSignal = pyqtSignal(str)
     def closeEvent(self, event):
         self.closed.emit()
         super().closeEvent(event)
-
-
     def __init__(self, mainWindowParent):
         super().__init__()
-
         self.mainWindowParent = mainWindowParent
         self.filename = ''
         self.setWindowTitle("Motion Tracker")
         # File
         self.formInitialized = False
         self.filebutton = QPushButton("Select File")
-        self.filebutton.clicked.connect(self.getfile)
+        self.filebutton.clicked.connect(self.selectFile)
         self.filebutton.setFixedWidth(500)
         self.h_layout = QHBoxLayout()
         self.h_layout.addWidget(self.filebutton)
@@ -67,7 +65,6 @@ class CustomWidget(QWidget):
         qml_file = os.path.join(os.path.dirname(__file__), 'media.qml')
         self.view.setSource(QUrl.fromLocalFile(qml_file))
 
-
         self.Form = QFormLayout()
 
         self.logo = QLabel()
@@ -77,43 +74,11 @@ class CustomWidget(QWidget):
         self.Form.addRow(self.logo)
         self.Form.addRow(self.h_layout)
         self.setLayout(self.Form)
-
-        self.getOutputPath()
-
-    def getOutputPath(self):
-        lines = []
-        self.outputPath = ''
-        file_path = os.path.join(documents_dir, 'MotionTracker.conf')
-        if os.path.exists(file_path):
-            with open(file_path, 'r') as f:
-                lines = f.readlines()
-        else:
-            with open(file_path, 'w') as f:
-                f.write('')
-        if len(lines) >= 2:
-            self.outputPath = lines[1].rstrip('\n')
-        else:
-            while len(lines) < 2:
-                lines.append('')
-            with open(file_path, "w") as f:
-                if (sys.platform == 'win32'):
-                    lines[1] = documents_dir + '\MotionTracker'
-                else:
-                    lines[1] = documents_dir + '/MotionTracker'
-                for line in lines:
-                    f.write(f'{line.strip()}' +'\n')
-            self.outputPath = lines[1].rstrip('\n')
-            self.outputPath += '/'
-        if not os.path.exists(self.outputPath):
-            os.makedirs(self.outputPath)
-
-    def getfile(self):
-        file_name = "MotionTracker.conf"
+    
+    def selectFile(self):
         file_dialog = QFileDialog(self, 'Open File')
-        if os.path.exists(os.path.join(documents_dir, file_name)):
-            with open(os.path.join(documents_dir, file_name)) as f:
-                path = f.readline()
-            file_dialog.setDirectory(path)
+        if self.inputPath:
+            file_dialog.setDirectory(self.inputPath)
             self.filename = file_dialog.getOpenFileNames()
         else:
             self.filename = file_dialog.getOpenFileNames()
@@ -122,21 +87,24 @@ class CustomWidget(QWidget):
         self.filebutton.hide()
         self.logo.hide()
         self.initializeForm()
-        self.formInitialized = True
+        self.selectFileSignal.emit(self.filename)
+        
+    def setOutputfps(self):
+        self.outputfpsSignal.emit(self.outputfps.text())
+
+    def setRescaleRatio(self):
+        self.rescaleRatioSignal.emit(self.rescaleRatio.text())
 
     def initializeForm(self):
-
         filename = self.filename[0][0]
-        if self.formInitialized:
-            return
 
-        self.submissionbutton = QPushButton('Submit')
-        self.submissionbutton.clicked.connect(self.processVideo)
+        #TODO 
+        #self.frame_width, self.frame_height, fps  = tracker.getVideoBounds(filename)
 
-        self.frame_width, self.frame_height, fps  = tracker.getVideoBounds(filename)
-
-        self.rescaleRatio = QLineEdit()
         self.outputfps = QLineEdit()
+        self.outputfps.textChanged.connect(self.setOutputfps)
+        self.rescaleRatio = QLineEdit()
+        self.rescaleRatio.textChanged.connect(self.setRescaleRatio)
         self.firstRow = QHBoxLayout()
 
         self.rescaleRatioLabel = QLabel("Rescale Ratio: ")
@@ -145,30 +113,28 @@ class CustomWidget(QWidget):
         self.rescaleRatio.setText("100")
         self.outputfpsLabel = QLabel("Output FPS:")
         self.firstRow.addWidget(self.outputfpsLabel)
-        self.outputfps.setText(str(int(math.ceil(fps))))
+        #self.outputfps.setText(str(int(math.ceil(fps))))
         # self.outputfps.setMaximum(int(math.ceil(fps)))
         self.firstRow.addWidget(self.outputfps)
         self.Form.addRow(self.firstRow)
-
 
         self.secondRow = QHBoxLayout()
         self.thirdRow = QHBoxLayout()
         self.fourthRow = QHBoxLayout()
 
-
         self.userYLBLabel = QLabel("Height Lower Bound:")
         self.secondRow.addWidget(self.userYLBLabel)
         self.userYLB = QSlider(Qt.Orientation.Horizontal)
-        self.userYLB.setMaximum(math.floor(self.frame_height/2))
+        #self.userYLB.setMaximum(math.floor(self.frame_height/2))
         self.secondRow.addWidget(self.userYLB)
         self.userYLB.valueChanged.connect(self.handleBoundValueChanged)
 
         self.userYUBLabel = QLabel("Height Upper Bound:")
         self.secondRow.addWidget(self.userYUBLabel)
         self.userYUB = QSlider(Qt.Orientation.Horizontal)
-        self.userYUB.setMinimum(math.floor(self.frame_height / 2))
-        self.userYUB.setMaximum(self.frame_height)
-        self.userYUB.setValue(self.frame_height)
+        #self.userYUB.setMinimum(math.floor(self.frame_height / 2))
+        #self.userYUB.setMaximum(self.frame_height)
+        #self.userYUB.setValue(self.frame_height)
         self.userYUB.valueChanged.connect(self.handleBoundValueChanged)
         self.secondRow.addWidget(self.userYUB)
 
@@ -176,16 +142,16 @@ class CustomWidget(QWidget):
         self.userXLBLabel = QLabel("Width Lower Bound:")
         self.thirdRow.addWidget(self.userXLBLabel)
         self.userXLB = QSlider(Qt.Orientation.Horizontal)
-        self.userXLB.setMaximum(math.floor(self.frame_width/2))
+        #self.userXLB.setMaximum(math.floor(self.frame_width/2))
         self.userXLB.valueChanged.connect(self.handleBoundValueChanged)
         self.thirdRow.addWidget(self.userXLB)
 
         self.userXUBLabel = QLabel("Width Upper Bound:")
         self.thirdRow.addWidget(self.userXUBLabel)
         self.userXUB = QSlider(Qt.Orientation.Horizontal)
-        self.userXUB.setMinimum(math.floor(self.frame_width/2))
-        self.userXUB.setMaximum(self.frame_width)
-        self.userXUB.setValue(self.frame_width)
+        #self.userXUB.setMinimum(math.floor(self.frame_width/2))
+        #self.userXUB.setMaximum(self.frame_width)
+        #self.userXUB.setValue(self.frame_width)
         self.userXUB.valueChanged.connect(self.handleBoundValueChanged)
         self.thirdRow.addWidget(self.userXUB)
 
@@ -216,8 +182,15 @@ class CustomWidget(QWidget):
         self.player.setLoops(self.player.Loops.Infinite)
         self.player.play() 
 
+
+        self.submissionbutton = QPushButton('Submit')
+        self.submissionbutton.clicked.connect(self.processVideo)
+        self.processFileSignal.emit()
+
         self.Form.removeWidget(self.filebutton)
         self.Form.addRow(self.submissionbutton)
+
+
 
     @pyqtSlot(result=QSize)
     def getSize(self):
@@ -237,13 +210,6 @@ class CustomWidget(QWidget):
         return [self.frame_width, self.frame_height]
 
     def processVideo(self):
-        self.getOutputPath()
-        outputfps = int(self.outputfps.text())
-        rescaleRatio = int(self.rescaleRatio.text())
-        xlb = self.userXLB.value() 
-        xub = self.userXUB.value() 
-        ylb = self.userYLB.value()
-        yub = self.userYUB.value()
 
         self.Form.removeRow(self.firstRow)
         self.Form.removeRow(self.secondRow)
@@ -269,11 +235,8 @@ class CustomWidget(QWidget):
         self.mainWindowParent.resizeLol(self.mainWindowParent)
         
         QApplication.processEvents()
-
-        counter = 1
-        for filename in self.filename[0]:
-            print(filename, progressBar, outputfps, rescaleRatio, xlb, xub, ylb, yub, self.outputPath)
-            tracker.processVideo(filename, progressBar, outputfps, rescaleRatio, xlb, xub, ylb, yub, self.outputPath)
-            counter += 1
-        #os.startfile(os.path.realpath(self.outputPath))
         self.close()
+
+    def setInputPath(self, inputpath):
+        self.inputPath = inputpath
+ 
