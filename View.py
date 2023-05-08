@@ -7,8 +7,8 @@ from PyQt6.QtMultimedia import QMediaPlayer
 from PyQt6.QtQuickWidgets import QQuickWidget
 from PyQt6.QtWidgets import (QApplication, QMainWindow, QPushButton, QDialog, QVBoxLayout, QMenu, 
                              QFileDialog, QLineEdit, QFormLayout, QWidget, QHBoxLayout, 
-                             QLabel, QSpinBox, QSlider, QProgressBar, QRadioButton)
-from PyQt6.QtGui import QPixmap, QAction
+                             QLabel, QSlider, QProgressBar, QRadioButton)
+from PyQt6.QtGui import QPixmap
 
 
 documents_dir = ''
@@ -34,6 +34,9 @@ class MainWindow(QMainWindow):
         self.menuBar = self.menuBar()
         self.fileMenu = QMenu('File')
         self.menuBar.addMenu(self.fileMenu)
+    def resizeLol(self, yuh):
+        self.setMinimumSize(825, 150)
+        self.resize(825, 150)
 
 class CustomWidget(QWidget):
     resized = pyqtSignal()
@@ -43,6 +46,10 @@ class CustomWidget(QWidget):
     processFileSignal = pyqtSignal()
     outputfpsSignal = pyqtSignal(str)
     rescaleRatioSignal = pyqtSignal(str)
+    xlbSignal = pyqtSignal(int)
+    xubSignal = pyqtSignal(int)
+    ylbSignal = pyqtSignal(int)
+    yubSignal = pyqtSignal(int)
     def closeEvent(self, event):
         self.closed.emit()
         super().closeEvent(event)
@@ -50,6 +57,9 @@ class CustomWidget(QWidget):
         super().__init__()
         self.mainWindowParent = mainWindowParent
         self.filename = ''
+        self.frame_width = 0
+        self.frame_height = 0 
+        self.fps = 0
         self.setWindowTitle("Motion Tracker")
         # File
         self.formInitialized = False
@@ -84,23 +94,27 @@ class CustomWidget(QWidget):
             self.filename = file_dialog.getOpenFileNames()
         if self.filename[0] == '':
             exit()
-        self.filebutton.hide()
-        self.logo.hide()
-        self.initializeForm()
+        self.Form.removeRow(self.logo)
+        self.Form.removeRow(self.h_layout)
         self.selectFileSignal.emit(self.filename)
-        
+        self.initializeForm()
+
     def setOutputfps(self):
         self.outputfpsSignal.emit(self.outputfps.text())
 
     def setRescaleRatio(self):
         self.rescaleRatioSignal.emit(self.rescaleRatio.text())
+    def setxlb(self):
+        self.xlbSignal.emit(self.userXLB.value())
+    def setxub(self):
+        self.xubSignal.emit(self.userXUB.value())
+    def setylb(self):
+        self.ylbSignal.emit(self.userYLB.value())
+    def setyub(self):
+        self.yubSignal.emit(self.userYUB.value())
 
     def initializeForm(self):
         filename = self.filename[0][0]
-
-        #TODO 
-        #self.frame_width, self.frame_height, fps  = tracker.getVideoBounds(filename)
-
         self.outputfps = QLineEdit()
         self.outputfps.textChanged.connect(self.setOutputfps)
         self.rescaleRatio = QLineEdit()
@@ -113,8 +127,7 @@ class CustomWidget(QWidget):
         self.rescaleRatio.setText("100")
         self.outputfpsLabel = QLabel("Output FPS:")
         self.firstRow.addWidget(self.outputfpsLabel)
-        #self.outputfps.setText(str(int(math.ceil(fps))))
-        # self.outputfps.setMaximum(int(math.ceil(fps)))
+        self.outputfps.setText(str(int(math.ceil(self.fps))))
         self.firstRow.addWidget(self.outputfps)
         self.Form.addRow(self.firstRow)
 
@@ -125,36 +138,41 @@ class CustomWidget(QWidget):
         self.userYLBLabel = QLabel("Height Lower Bound:")
         self.secondRow.addWidget(self.userYLBLabel)
         self.userYLB = QSlider(Qt.Orientation.Horizontal)
-        #self.userYLB.setMaximum(math.floor(self.frame_height/2))
+        self.userYLB.setMaximum(math.floor(self.frame_height/2))
         self.secondRow.addWidget(self.userYLB)
         self.userYLB.valueChanged.connect(self.handleBoundValueChanged)
+        self.userYLB.valueChanged.connect(self.setylb)
+
 
         self.userYUBLabel = QLabel("Height Upper Bound:")
         self.secondRow.addWidget(self.userYUBLabel)
         self.userYUB = QSlider(Qt.Orientation.Horizontal)
-        #self.userYUB.setMinimum(math.floor(self.frame_height / 2))
-        #self.userYUB.setMaximum(self.frame_height)
-        #self.userYUB.setValue(self.frame_height)
+        self.userYUB.setMinimum(math.floor(self.frame_height / 2))
+        self.userYUB.setMaximum(self.frame_height)
+        self.userYUB.setValue(self.frame_height)
         self.userYUB.valueChanged.connect(self.handleBoundValueChanged)
         self.secondRow.addWidget(self.userYUB)
+        self.userYLB.valueChanged.connect(self.setyub)
+
 
 
         self.userXLBLabel = QLabel("Width Lower Bound:")
         self.thirdRow.addWidget(self.userXLBLabel)
         self.userXLB = QSlider(Qt.Orientation.Horizontal)
-        #self.userXLB.setMaximum(math.floor(self.frame_width/2))
+        self.userXLB.setMaximum(math.floor(self.frame_width/2))
         self.userXLB.valueChanged.connect(self.handleBoundValueChanged)
         self.thirdRow.addWidget(self.userXLB)
+        self.userYLB.valueChanged.connect(self.setxlb)
 
         self.userXUBLabel = QLabel("Width Upper Bound:")
         self.thirdRow.addWidget(self.userXUBLabel)
         self.userXUB = QSlider(Qt.Orientation.Horizontal)
-        #self.userXUB.setMinimum(math.floor(self.frame_width/2))
-        #self.userXUB.setMaximum(self.frame_width)
-        #self.userXUB.setValue(self.frame_width)
+        self.userXUB.setMinimum(math.floor(self.frame_width/2))
+        self.userXUB.setMaximum(self.frame_width)
+        self.userXUB.setValue(self.frame_width)
         self.userXUB.valueChanged.connect(self.handleBoundValueChanged)
         self.thirdRow.addWidget(self.userXUB)
-
+        self.userYLB.valueChanged.connect(self.setxub)
 
         self.directionLabel = QLabel("Racewalker Direction:")
         self.fourthRow.addWidget(self.directionLabel)
@@ -180,14 +198,9 @@ class CustomWidget(QWidget):
         self.player = self.view.rootObject().findChild(QMediaPlayer, "player")
         self.player.setProperty('source', filename)
         self.player.setLoops(self.player.Loops.Infinite)
-        self.player.play() 
-
-
+        self.player.pause() 
         self.submissionbutton = QPushButton('Submit')
         self.submissionbutton.clicked.connect(self.processVideo)
-        self.processFileSignal.emit()
-
-        self.Form.removeWidget(self.filebutton)
         self.Form.addRow(self.submissionbutton)
 
 
@@ -210,7 +223,6 @@ class CustomWidget(QWidget):
         return [self.frame_width, self.frame_height]
 
     def processVideo(self):
-
         self.Form.removeRow(self.firstRow)
         self.Form.removeRow(self.secondRow)
         self.Form.removeRow(self.thirdRow)
@@ -218,25 +230,29 @@ class CustomWidget(QWidget):
         self.Form.removeWidget(self.submissionbutton)
         self.Form.removeRow(self.view) 
 
-        progressBar = QProgressBar()
+        self.progressBar = QProgressBar()
 
-        progressBar.setGeometry(50, 50, 250, 30)
+        self.progressBar.setGeometry(50, 50, 250, 30)
+        
+        self.progressBarRow = QHBoxLayout()
+        self.progressBarRow.addWidget(self.progressBar)
+        self.Form.addRow(self.progressBarRow)
 
-        progressBarRow = QHBoxLayout()
-        progressBarRow.addWidget(progressBar)
-        self.Form.addRow(progressBarRow)
-
-        progressLabelRow = QHBoxLayout()
-        progressLabel = QLabel("Processing video...")
-        progressLabelRow.addWidget(progressLabel)
-        self.Form.addRow(progressLabelRow)
+        self.progressLabelRow = QHBoxLayout()
+        self.progressLabel = QLabel("Processing video...")
+        self.progressLabelRow.addWidget(self.progressLabel)
+        self.Form.addRow(self.progressLabelRow)
         self.setMinimumSize(825, 150)
         self.resize(825, 150)
         self.mainWindowParent.resizeLol(self.mainWindowParent)
-        
         QApplication.processEvents()
+        self.processFileSignal.emit()
+
         self.close()
 
     def setInputPath(self, inputpath):
         self.inputPath = inputpath
- 
+    def setInitialParameters(self, framewidth, frameheight, fps):
+        self.frame_width = framewidth
+        self.frame_height = frameheight 
+        self.fps = fps
