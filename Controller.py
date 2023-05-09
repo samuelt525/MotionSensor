@@ -41,7 +41,6 @@ class Controller:
         self.model.setFileName(self.view.widget.filename)
         w, h, fps = tracker.getVideoBounds(filename[0][0])
         self.view.widget.setInitialParameters(w,h,fps)
-        print(tracker.getVideoBounds(filename[0][0]))
     def saveToConfFile(self, lineNum, text_input):
         lines = ['', '']
         print(text_input)
