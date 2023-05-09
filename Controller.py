@@ -16,9 +16,11 @@ class Controller:
         self.app = QApplication([])
         self.model = Model()
         self.view = MainWindow()
+        self.confFileName = "MotionTracker.conf"
         self.view.widget.setInputPath(self.checkInputPath())
         self.view.show()
 
+        self.view.fileSettingsChangedSignal.connect(self.saveToConfFile)
         self.view.widget.selectFileSignal.connect(self.setFile)
         self.view.widget.processFileSignal.connect(self.processFile)
         self.view.widget.outputfpsSignal.connect(self.setOutputfps)
@@ -29,9 +31,9 @@ class Controller:
         self.view.widget.yubSignal.connect(self.setyub)
         
     def checkInputPath(self):
-        file_name = "MotionTracker.conf"
-        if os.path.exists(os.path.join(documents_dir, file_name)):
-            with open(os.path.join(documents_dir, file_name)) as f:
+        path = ''
+        if os.path.exists(os.path.join(documents_dir, self.confFileName)):
+            with open(os.path.join(documents_dir, self.confFileName)) as f:
                 path = f.readline()
         return path
 
@@ -40,6 +42,18 @@ class Controller:
         w, h, fps = tracker.getVideoBounds(filename[0][0])
         self.view.widget.setInitialParameters(w,h,fps)
         print(tracker.getVideoBounds(filename[0][0]))
+    def saveToConfFile(self, lineNum, text_input):
+        lines = ['', '']
+        print(text_input)
+        confFilePath = os.path.join(documents_dir, self.confFileName)
+        if os.path.exists(confFilePath):
+            with open(confFilePath, 'r') as f:
+                lines = f.readlines()
+        with open(confFilePath, "w") as f:
+            lines[lineNum] = text_input
+            for line in lines:
+                f.write(f'{line.strip()}' +'\n')
+        print("File saved to:", self.confFileName)
     def setOutputfps(self, outputfps):
         try:
             outputfps = int(outputfps)

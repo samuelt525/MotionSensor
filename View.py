@@ -8,7 +8,7 @@ from PyQt6.QtQuickWidgets import QQuickWidget
 from PyQt6.QtWidgets import (QApplication, QMainWindow, QPushButton, QDialog, QVBoxLayout, QMenu, 
                              QFileDialog, QLineEdit, QFormLayout, QWidget, QHBoxLayout, 
                              QLabel, QSlider, QProgressBar, QRadioButton)
-from PyQt6.QtGui import QPixmap
+from PyQt6.QtGui import QPixmap, QAction
 
 
 documents_dir = ''
@@ -19,6 +19,7 @@ else:
 
 
 class MainWindow(QMainWindow):
+    fileSettingsChangedSignal = pyqtSignal(int, str)
     def __init__(self):
         super().__init__()
         self.InitializeMenu()
@@ -34,9 +35,71 @@ class MainWindow(QMainWindow):
         self.menuBar = self.menuBar()
         self.fileMenu = QMenu('File')
         self.menuBar.addMenu(self.fileMenu)
+
+        self.defaultVideoPath = QAction('Default Input Video Path')
+        self.fileMenu.addAction(self.defaultVideoPath)
+        self.defaultVideoPath.triggered.connect(self.DefaultInputPathDialog)
+
+        self.defaultOutputPath = QAction('Default Output Video Path')
+        self.fileMenu.addAction(self.defaultOutputPath)
+        self.defaultOutputPath.triggered.connect(self.DefaultOutputPathDialog)
     def resizeLol(self, yuh):
         self.setMinimumSize(825, 150)
         self.resize(825, 150)
+    def DefaultInputPathDialog(self):
+        dialog = QDialog(self)
+        dialog.setWindowTitle('Text Input')
+        layout = QVBoxLayout()
+
+        # create text input
+        text_label = QLabel('Enter Input Video Path')
+        text_input = QLineEdit()
+        layout.addWidget(text_label)
+        layout.addWidget(text_input)
+
+        # create OK button
+        ok_button = QPushButton('OK')
+        ok_button.clicked.connect(dialog.accept)
+        layout.addWidget(ok_button)
+        dialog.setLayout(layout)
+        # create file path
+        file_path = os.path.join(documents_dir, "MotionTracker.conf")
+        if os.path.exists(file_path):
+            with open (file_path,"r") as rf:
+                firstline = rf.readline()
+                text_input.setText(firstline)
+        accept = dialog.exec()
+
+        if accept and text_input.text():
+            self.fileSettingsChangedSignal.emit(0, text_input.text())
+
+    def DefaultOutputPathDialog(self):
+        dialog = QDialog(self)
+        dialog.setWindowTitle('Text Input')
+        layout = QVBoxLayout()
+
+        # create text input
+        text_label = QLabel('Enter Output Video Path')
+        text_input = QLineEdit()
+        layout.addWidget(text_label)
+        layout.addWidget(text_input)
+
+        # create OK button
+        ok_button = QPushButton('OK')
+        ok_button.clicked.connect(dialog.accept)
+        layout.addWidget(ok_button)
+        dialog.setLayout(layout)
+        # create file path
+        file_path = os.path.join(documents_dir, "MotionTracker.conf")
+        if os.path.exists(file_path):
+            with open (file_path,"r") as rf:
+                rf.readline()
+                secondline = rf.readline()
+                text_input.setText(secondline)
+        accept = dialog.exec()
+
+        if accept and text_input.text():
+            self.fileSettingsChangedSignal.emit(0, text_input.text())
 
 class CustomWidget(QWidget):
     resized = pyqtSignal()
@@ -198,7 +261,8 @@ class CustomWidget(QWidget):
         self.player = self.view.rootObject().findChild(QMediaPlayer, "player")
         self.player.setProperty('source', filename)
         self.player.setLoops(self.player.Loops.Infinite)
-        self.player.pause() 
+        self.player.pause()
+        self.player
         self.submissionbutton = QPushButton('Submit')
         self.submissionbutton.clicked.connect(self.processVideo)
         self.Form.addRow(self.submissionbutton)

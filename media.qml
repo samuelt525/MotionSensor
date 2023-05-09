@@ -83,7 +83,7 @@ Item {
         anchors.right:parent.right
         anchors.margins:20
         orientation:Qt.Vertical
-        value:0.5
+        value:0
     }
 
     Slider {
