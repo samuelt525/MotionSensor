@@ -7,7 +7,14 @@ class Model:
         self.xub = 0
         self.ylb = 0
         self.yub = 0 
+        self.inputPath = ''
         self.outputPath = ''
+
+    
+    def setInputPath(self, inputPath):
+        self.inputPath = inputPath
+    def setOutputPath(self, outputPath):
+        self.outputPath = outputPath
 
     def setFileName(self, filename):
         self.fileName = filename

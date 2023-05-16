@@ -107,7 +107,8 @@ class MainWindow(QMainWindow):
         accept = dialog.exec()
 
         if accept and text_input.text():
-            self.fileSettingsChangedSignal.emit(0, text_input.text())
+            self.fileSettingsChangedSignal.emit(1, text_input.text())
+
 
     def selectDirectory(self, text_input):
         directory_path = QFileDialog.getExistingDirectory(self, 'Select Directory')
@@ -193,6 +194,7 @@ class CustomWidget(QWidget):
 
     def initializeForm(self):
         filename = self.filename[0][0]
+
         self.outputfps = QLineEdit()
         self.outputfps.textChanged.connect(self.setOutputfps)
         self.rescaleRatio = QLineEdit()
@@ -277,7 +279,7 @@ class CustomWidget(QWidget):
         self.player.setProperty('source', filename)
         self.player.setLoops(self.player.Loops.Infinite)
         self.player.pause()
-        self.player
+
         self.submissionbutton = QPushButton('Submit')
         self.submissionbutton.clicked.connect(self.processVideo)
         self.Form.addRow(self.submissionbutton)
@@ -329,8 +331,11 @@ class CustomWidget(QWidget):
 
         self.close()
 
-    def setInputPath(self, inputpath):
-        self.inputPath = inputpath
+    def setInputPath(self, inputPath):
+        self.inputPath = inputPath
+    def setOutputPath(self,outputPath):
+        self.outputPath = outputPath
+
     def setInitialParameters(self, framewidth, frameheight, fps):
         self.frame_width = framewidth
         self.frame_height = frameheight 

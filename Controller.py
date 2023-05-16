@@ -29,7 +29,7 @@ class Controller:
         self.view.widget.xubSignal.connect(self.setxub)
         self.view.widget.ylbSignal.connect(self.setylb)
         self.view.widget.yubSignal.connect(self.setyub)
-        
+
     def checkInputPath(self):
         path = ''
         if os.path.exists(os.path.join(documents_dir, self.confFileName)):
@@ -43,7 +43,6 @@ class Controller:
         self.view.widget.setInitialParameters(w,h,fps)
     def saveToConfFile(self, lineNum, text_input):
         lines = ['', '']
-        print(text_input)
         confFilePath = os.path.join(documents_dir, self.confFileName)
         if os.path.exists(confFilePath):
             with open(confFilePath, 'r') as f:
@@ -52,7 +51,13 @@ class Controller:
             lines[lineNum] = text_input + '/'
             for line in lines:
                 f.write(f'{line.strip()}' +'\n')
+        self.model.setInputPath(lines[0])
+        self.model.setOutputPath(lines[1])
+
+        self.view.widget.setInputPath(self.model.inputPath)
+        self.view.widget.setOutputPath(self.model.outputPath)
         print("File saved to:", self.confFileName)
+
     def setOutputfps(self, outputfps):
         try:
             outputfps = int(outputfps)
@@ -75,7 +80,7 @@ class Controller:
         self.model.setyub(yub)
     def processFile(self):
         for filename in self.model.fileName[0]:
-            tracker.processVideo(filename, self.view.widget.progressBar, self.model.outputfps, self.model.rescaleRatio, self.model.xlb, self.model.xub, self.model.ylb, self.model.yub)
+            tracker.processVideo(filename, self.view.widget.progressBar, self.model.outputfps, self.model.rescaleRatio, self.model.xlb, self.model.xub, self.model.ylb, self.model.yub, '/Users/samueltsui/Documents/MotionTracker/')
     def run(self):
         self.app.exec()
 
