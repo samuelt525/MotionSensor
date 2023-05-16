@@ -49,7 +49,7 @@ class Controller:
             with open(confFilePath, 'r') as f:
                 lines = f.readlines()
         with open(confFilePath, "w") as f:
-            lines[lineNum] = text_input
+            lines[lineNum] = text_input + '/'
             for line in lines:
                 f.write(f'{line.strip()}' +'\n')
         print("File saved to:", self.confFileName)
