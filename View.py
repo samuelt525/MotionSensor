@@ -48,7 +48,7 @@ class MainWindow(QMainWindow):
         self.resize(825, 150)
     def DefaultInputPathDialog(self):
         dialog = QDialog(self)
-        dialog.setWindowTitle('Text Input')
+        dialog.setWindowTitle('Select Directory')
         layout = QVBoxLayout()
 
         # create text input
@@ -56,6 +56,10 @@ class MainWindow(QMainWindow):
         text_input = QLineEdit()
         layout.addWidget(text_label)
         layout.addWidget(text_input)
+
+        select_button = QPushButton('Select Directory')
+        layout.addWidget(select_button)
+        select_button.clicked.connect(lambda: self.selectDirectory(text_input))
 
         # create OK button
         ok_button = QPushButton('OK')
@@ -84,6 +88,10 @@ class MainWindow(QMainWindow):
         layout.addWidget(text_label)
         layout.addWidget(text_input)
 
+        select_button = QPushButton('Select Directory')
+        layout.addWidget(select_button)
+        select_button.clicked.connect(lambda: self.selectDirectory(text_input))
+
         # create OK button
         ok_button = QPushButton('OK')
         ok_button.clicked.connect(dialog.accept)
@@ -100,6 +108,13 @@ class MainWindow(QMainWindow):
 
         if accept and text_input.text():
             self.fileSettingsChangedSignal.emit(0, text_input.text())
+
+    def selectDirectory(self, text_input):
+        directory_path = QFileDialog.getExistingDirectory(self, 'Select Directory')
+        directory_path = os.path.normpath(directory_path)
+        # For some reason the directory path becomes "." when hitting cancel in the file explorer window
+        if directory_path != "" and directory_path != ".":
+            text_input.setText(directory_path)
 
 class CustomWidget(QWidget):
     resized = pyqtSignal()
