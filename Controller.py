@@ -17,7 +17,9 @@ class Controller:
         self.model = Model()
         self.view = MainWindow()
         self.confFileName = "MotionTracker.conf"
+        self.checkConfFileExists()
         self.view.widget.setInputPath(self.checkInputPath())
+        self.model.setOutputPath(self.checkOutputPath())
         self.view.show()
 
         self.view.fileSettingsChangedSignal.connect(self.saveToConfFile)
@@ -30,11 +32,24 @@ class Controller:
         self.view.widget.ylbSignal.connect(self.setylb)
         self.view.widget.yubSignal.connect(self.setyub)
 
+    def checkConfFileExists(self):
+        confFilePath = os.path.join(documents_dir, self.confFileName)
+        if not os.path.exists(confFilePath):
+            with open(confFilePath, 'w') as f:
+                f.write('\n\n')
     def checkInputPath(self):
         path = ''
         if os.path.exists(os.path.join(documents_dir, self.confFileName)):
             with open(os.path.join(documents_dir, self.confFileName)) as f:
                 path = f.readline()
+        return path
+    def checkOutputPath(self):
+        path = ''
+        if os.path.exists(os.path.join(documents_dir, self.confFileName)):
+            with open(os.path.join(documents_dir, self.confFileName)) as f:
+                f.readline()
+                path = f.readline()
+        path = path.rstrip()
         return path
 
     def setFile(self,filename):
@@ -51,8 +66,8 @@ class Controller:
             lines[lineNum] = text_input + '/'
             for line in lines:
                 f.write(f'{line.strip()}' +'\n')
-        self.model.setInputPath(lines[0])
-        self.model.setOutputPath(lines[1])
+        self.model.setInputPath(lines[0].rstrip())
+        self.model.setOutputPath(lines[1].rstrip())
 
         self.view.widget.setInputPath(self.model.inputPath)
         self.view.widget.setOutputPath(self.model.outputPath)
@@ -80,7 +95,7 @@ class Controller:
         self.model.setyub(yub)
     def processFile(self):
         for filename in self.model.fileName[0]:
-            tracker.processVideo(filename, self.view.widget.progressBar, self.model.outputfps, self.model.rescaleRatio, self.model.xlb, self.model.xub, self.model.ylb, self.model.yub, '/Users/samueltsui/Documents/MotionTracker/')
+            tracker.processVideo(filename, self.view.widget.progressBar, self.model.outputfps, self.model.rescaleRatio, self.model.xlb, self.model.xub, self.model.ylb, self.model.yub, self.model.outputPath)
     def run(self):
         self.app.exec()
 
