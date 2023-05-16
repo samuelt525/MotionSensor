@@ -17,7 +17,6 @@ class Controller:
         self.model = Model()
         self.view = MainWindow()
         self.confFileName = "MotionTracker.conf"
-        self.checkConfFileExists()
         self.view.widget.setInputPath(self.checkInputPath())
         self.model.setOutputPath(self.checkOutputPath())
         self.view.show()
@@ -32,11 +31,6 @@ class Controller:
         self.view.widget.ylbSignal.connect(self.setylb)
         self.view.widget.yubSignal.connect(self.setyub)
 
-    def checkConfFileExists(self):
-        confFilePath = os.path.join(documents_dir, self.confFileName)
-        if not os.path.exists(confFilePath):
-            with open(confFilePath, 'w') as f:
-                f.write('\n\n')
     def checkInputPath(self):
         path = ''
         if os.path.exists(os.path.join(documents_dir, self.confFileName)):
