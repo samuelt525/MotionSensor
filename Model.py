@@ -1,6 +1,7 @@
 class Model:
     def __init__(self):
         self.fileName = ''
+        self.filePath = ''
         self.outputfps = 0
         self.rescaleRatio = 0
         self.xlb = 0
@@ -18,6 +19,8 @@ class Model:
 
     def setFileName(self, filename):
         self.fileName = filename
+    def setFilePath(self, filePath):
+        self.filePath = filePath
     def setOutputfps(self, outputfps):
         self.outputfps = outputfps
     def setRescaleRatio(self, rescaleRatio):

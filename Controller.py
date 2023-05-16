@@ -18,10 +18,11 @@ class Controller:
         self.view = MainWindow()
         self.confFileName = "MotionTracker.conf"
         self.view.widget.setInputPath(self.checkInputPath())
-        self.model.setOutputPath(self.checkOutputPath())
         self.view.show()
 
         self.view.fileSettingsChangedSignal.connect(self.saveToConfFile)
+        self.view.defaultOutputVideoPathTextFieldSignal.connect(self.setDefaultOutputVideoPathTextInput)
+        self.view.setDefaultVideoOutputPathSignal.connect(self.setOutputPath)
         self.view.widget.selectFileSignal.connect(self.setFile)
         self.view.widget.processFileSignal.connect(self.processFile)
         self.view.widget.outputfpsSignal.connect(self.setOutputfps)
@@ -37,19 +38,28 @@ class Controller:
             with open(os.path.join(documents_dir, self.confFileName)) as f:
                 path = f.readline()
         return path
-    def checkOutputPath(self):
-        path = ''
-        if os.path.exists(os.path.join(documents_dir, self.confFileName)):
-            with open(os.path.join(documents_dir, self.confFileName)) as f:
-                f.readline()
-                path = f.readline()
-        path = path.rstrip()
-        return path
 
     def setFile(self,filename):
         self.model.setFileName(self.view.widget.filename)
+        self.setFilePath()
         w, h, fps = tracker.getVideoBounds(filename[0][0])
         self.view.widget.setInitialParameters(w,h,fps)
+    def setFilePath(self):
+        filePath = ''
+        filePathArr = self.view.widget.filename[0][0].split('/')
+        filePathArr.pop()
+        for d in filePathArr:
+            filePath += d + '/'
+        filePath = filePath.rstrip('/')
+        self.model.setFilePath(filePath)
+        self.setOutputPath()
+    def setOutputPath(self, outputPath = ''):
+        if outputPath:
+            self.model.setOutputPath(outputPath)
+        elif not outputPath and not self.model.outputPath:
+            self.model.setOutputPath(self.model.filePath)
+    def setDefaultOutputVideoPathTextInput(self):
+        self.view.default_output_text_input.setText(self.model.outputPath)
     def saveToConfFile(self, lineNum, text_input):
         lines = ['', '']
         confFilePath = os.path.join(documents_dir, self.confFileName)
@@ -61,7 +71,6 @@ class Controller:
             for line in lines:
                 f.write(f'{line.strip()}' +'\n')
         self.model.setInputPath(lines[0].rstrip())
-        self.model.setOutputPath(lines[1].rstrip())
 
         self.view.widget.setInputPath(self.model.inputPath)
         self.view.widget.setOutputPath(self.model.outputPath)

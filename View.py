@@ -20,6 +20,8 @@ else:
 
 class MainWindow(QMainWindow):
     fileSettingsChangedSignal = pyqtSignal(int, str)
+    defaultOutputVideoPathTextFieldSignal = pyqtSignal()
+    setDefaultVideoOutputPathSignal = pyqtSignal(str)
     def __init__(self):
         super().__init__()
         self.InitializeMenu()
@@ -40,7 +42,7 @@ class MainWindow(QMainWindow):
         self.fileMenu.addAction(self.defaultVideoPath)
         self.defaultVideoPath.triggered.connect(self.DefaultInputPathDialog)
 
-        self.defaultOutputPath = QAction('Default Output Video Path')
+        self.defaultOutputPath = QAction('Output Video Path')
         self.fileMenu.addAction(self.defaultOutputPath)
         self.defaultOutputPath.triggered.connect(self.DefaultOutputPathDialog)
     def resizeLol(self, yuh):
@@ -84,30 +86,25 @@ class MainWindow(QMainWindow):
 
         # create text input
         text_label = QLabel('Enter Output Video Path')
-        text_input = QLineEdit()
+        self.default_output_text_input = QLineEdit()
         layout.addWidget(text_label)
-        layout.addWidget(text_input)
+        layout.addWidget(self.default_output_text_input)
 
         select_button = QPushButton('Select Directory')
         layout.addWidget(select_button)
-        select_button.clicked.connect(lambda: self.selectDirectory(text_input))
+        select_button.clicked.connect(lambda: self.selectDirectory(self.default_output_text_input))
 
         # create OK button
         ok_button = QPushButton('OK')
         ok_button.clicked.connect(dialog.accept)
         layout.addWidget(ok_button)
         dialog.setLayout(layout)
-        # create file path
-        file_path = os.path.join(documents_dir, "MotionTracker.conf")
-        if os.path.exists(file_path):
-            with open (file_path,"r") as rf:
-                rf.readline()
-                secondline = rf.readline()
-                text_input.setText(secondline)
+
+        self.defaultOutputVideoPathTextFieldSignal.emit()
         accept = dialog.exec()
 
-        if accept and text_input.text():
-            self.fileSettingsChangedSignal.emit(1, text_input.text())
+        if accept and self.default_output_text_input.text():
+            self.setDefaultVideoOutputPathSignal.emit(self.default_output_text_input.text())
 
 
     def selectDirectory(self, text_input):
@@ -136,6 +133,7 @@ class CustomWidget(QWidget):
         super().__init__()
         self.mainWindowParent = mainWindowParent
         self.filename = ''
+        self.filepath = ''
         self.frame_width = 0
         self.frame_height = 0 
         self.fps = 0
