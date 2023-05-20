@@ -197,6 +197,14 @@ class CustomWidget(QWidget):
         self.outputfps.textChanged.connect(self.setOutputfps)
         self.rescaleRatio = QLineEdit()
         self.rescaleRatio.textChanged.connect(self.setRescaleRatio)
+        
+        self.algoSensitivityRow = QHBoxLayout()
+        self.algorithmSensitivitySlider = QSlider(Qt.Orientation.Horizontal)
+        self.alogrithmSensitivityLabel = QLabel("Sensitivity:")
+        self.algoSensitivityRow.addWidget(self.alogrithmSensitivityLabel)
+        self.algoSensitivityRow.addWidget(self.algorithmSensitivitySlider)
+        self.Form.addRow(self.algoSensitivityRow)
+        
         self.firstRow = QHBoxLayout()
 
         self.rescaleRatioLabel = QLabel("Rescale Ratio: ")
