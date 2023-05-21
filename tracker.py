@@ -30,8 +30,8 @@ def processVideo(filepath, progressBar, outputFPS, rescaleRatio, sensitivityRati
     cap = cv2.VideoCapture(filepath)
     
     # Get the video properties
+    # fps = int(cap.get(cv2.CAP_PROP_FPS))
     total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
-    fps = int(cap.get(cv2.CAP_PROP_FPS))
     width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
     height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
     progress_index = 0
@@ -39,10 +39,7 @@ def processVideo(filepath, progressBar, outputFPS, rescaleRatio, sensitivityRati
     # Specify the desired framerate
     desired_fps = outputFPS
  
-    motion_threshold = 0.05 * (height * width)
     motion_stats = []
-    # print(f'total pixels = {width*height}, motion_threshold={0}')
-    # Initialize variables for motion detection
     no_motion_frames = 0
     
     scale_factor = 100
@@ -51,7 +48,6 @@ def processVideo(filepath, progressBar, outputFPS, rescaleRatio, sensitivityRati
     else:
         raise ValueError("Value is out of range (1-100)")
 
-
     filename = os.path.splitext(os.path.basename(filepath))[0]
     # Create a video writer object image.pngto output the processed video
     out = cv2.VideoWriter(outputPath + '/' + filename + '-output.mp4', cv2.VideoWriter_fourcc(*'mp4v'), desired_fps, (int(width * scale_factor / 100), int(height * scale_factor / 100)))
@@ -59,12 +55,12 @@ def processVideo(filepath, progressBar, outputFPS, rescaleRatio, sensitivityRati
 
     # Create a background subtractor object
     back_sub = cv2.createBackgroundSubtractorMOG2()
-
-    motion_count_threshold = 0.20
+    
     if sensitivityRatio in range(1, 101):
-        motion_count_threshold = sensitivityRatio / 100 * (height * width)
+        motion_count_threshold = round(sensitivityRatio / 100 * (height * width))
     else:
         raise ValueError("Sensitivity Value is out of range (1-100). Recommended 20.")
+    print(height*width)
     print(motion_count_threshold)
 
     # Loop through all frames in the video
@@ -115,20 +111,8 @@ def processVideo(filepath, progressBar, outputFPS, rescaleRatio, sensitivityRati
 
 if __name__ == '__main__': 
     prog_bar = 0
-    processVideo("/Users/humaid/Documents/seniordesign/code/main/MotionTracker54/C0078_clip1min.mp4", prog_bar, 120, 100, 20, 0, 2160, 0, 3840, "/Users/humaid/Documents/seniordesign/code/main/MotionTracker54/C0078_clip1min-output-10.mp4")
+    processVideo("/Users/humaid/Documents/seniordesign/code/main/MotionTracker54/Motorcycle.mp4", prog_bar, 120, 100, 10, 0, 782, 0, 1392, "/Users/humaid/Documents/seniordesign/code/main/MotionTracker54/Motorcycle-output10.mp4")
     # processVideo("/Users/samueltsui/Documents/GitHub/MotionSensor/video-compression/C0078_clip1min60fps.mp4", prog_bar, 60, 100, 0, 2160, 0, 3840, "/Users/samueltsui/Desktop")
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 # if __name__ == '__main__': 
