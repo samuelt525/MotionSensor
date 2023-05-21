@@ -320,12 +320,13 @@ class CustomWidget(QWidget):
         return [self.frame_width, self.frame_height]
 
     def processVideo(self):
+        self.Form.removeRow(self.algoSensitivityRow)
         self.Form.removeRow(self.firstRow)
         self.Form.removeRow(self.secondRow)
         self.Form.removeRow(self.thirdRow)
         self.Form.removeRow(self.fourthRow)
         self.Form.removeWidget(self.submissionbutton)
-        self.Form.removeRow(self.view) 
+        self.Form.removeRow(self.view)
 
         self.progressBar = QProgressBar()
 
