@@ -34,5 +34,4 @@ class Model:
     def setyub(self, yub):
         self.yub = yub
     def setSensitivtyThreshold(self, threshold):
-        print(threshold)
         self.sensitivtyThreshold = threshold
