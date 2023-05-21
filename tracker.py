@@ -72,8 +72,8 @@ def processVideo(filepath, progressBar, outputFPS, rescaleRatio, sensitivityRati
         if not ret:  # check if the frame is empty
             continue
         
-        # progress_index += 1
-        # progressBar.setValue(int(100 * progress_index / total_frames))
+        progress_index += 1
+        progressBar.setValue(int(100 * progress_index / total_frames))
         
         frame = cv2.resize(frame, (math.ceil(width * scale_factor / 100), math.ceil(height * scale_factor / 100)))
         
