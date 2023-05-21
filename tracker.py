@@ -51,10 +51,10 @@ def processVideo(filepath, progressBar, outputFPS, rescaleRatio, sensitivityRati
     else:
         raise ValueError("Value is out of range (1-100)")
 
-    filename = filepath.split('/')
-    filename = filename[-1]
+
+    filename = os.path.splitext(os.path.basename(filepath))[0]
     # Create a video writer object image.pngto output the processed video
-    out = cv2.VideoWriter(outputPath + '/' + filename, cv2.VideoWriter_fourcc(*'mp4v'), desired_fps, (int(width * scale_factor / 100), int(height * scale_factor / 100)))
+    out = cv2.VideoWriter(outputPath + '/' + filename + '-output.mp4', cv2.VideoWriter_fourcc(*'mp4v'), desired_fps, (int(width * scale_factor / 100), int(height * scale_factor / 100)))
     # out = cv2.VideoWriter(outputPath, cv2.VideoWriter_fourcc(*'mp4v'), desired_fps, (int(width * scale_factor / 100), int(height * scale_factor / 100)))
 
     # Create a background subtractor object
