@@ -24,7 +24,7 @@ def getVideoBounds(filepath):
     return frame_width, frame_height, fps
 
 
-def processVideo(filepath, progressBar, outputFPS, rescaleRatio, userXLB, userXUB, userYLB, userYUB, outputPath):
+def processVideo(filepath, progressBar, outputFPS, rescaleRatio, sensitivityRatio, userXLB, userXUB, userYLB, userYUB, outputPath):
 
     # Open the video file
     cap = cv2.VideoCapture(filepath)
@@ -60,6 +60,13 @@ def processVideo(filepath, progressBar, outputFPS, rescaleRatio, userXLB, userXU
     # Create a background subtractor object
     back_sub = cv2.createBackgroundSubtractorMOG2()
 
+    motion_count_threshold = 0.20
+    if sensitivityRatio in range(1, 101):
+        motion_count_threshold = sensitivityRatio / 100 * (height * width)
+    else:
+        raise ValueError("Sensitivity Value is out of range (1-100). Recommended 20.")
+    print(motion_count_threshold)
+
     # Loop through all frames in the video
     for i in range(total_frames):
 
@@ -69,8 +76,8 @@ def processVideo(filepath, progressBar, outputFPS, rescaleRatio, userXLB, userXU
         if not ret:  # check if the frame is empty
             continue
         
-        progress_index += 1
-        progressBar.setValue(int(100 * progress_index / total_frames))
+        # progress_index += 1
+        # progressBar.setValue(int(100 * progress_index / total_frames))
         
         frame = cv2.resize(frame, (math.ceil(width * scale_factor / 100), math.ceil(height * scale_factor / 100)))
         
@@ -85,7 +92,8 @@ def processVideo(filepath, progressBar, outputFPS, rescaleRatio, userXLB, userXU
         motion_stats.append(motion_count)
 
         # If there is motion in the frame, reset the no motion frames counter
-        if motion_count > 14000:
+
+        if motion_count > motion_count_threshold:
             no_motion_frames = 0
         else:
             no_motion_frames += 1
@@ -107,7 +115,7 @@ def processVideo(filepath, progressBar, outputFPS, rescaleRatio, userXLB, userXU
 
 if __name__ == '__main__': 
     prog_bar = 0
-    processVideo("/Users/humaid/Documents/seniordesign/code/main/MotionTracker54/C0078_clip10sec.mp4", prog_bar, 120, 50, 0, 2160, 0, 3840, "/Users/humaid/Documents/seniordesign/code/main/MotionTracker54/C0078_clip10sec-output.mp4")
+    processVideo("/Users/humaid/Documents/seniordesign/code/main/MotionTracker54/C0078_clip1min.mp4", prog_bar, 120, 100, 20, 0, 2160, 0, 3840, "/Users/humaid/Documents/seniordesign/code/main/MotionTracker54/C0078_clip1min-output-10.mp4")
     # processVideo("/Users/samueltsui/Documents/GitHub/MotionSensor/video-compression/C0078_clip1min60fps.mp4", prog_bar, 60, 100, 0, 2160, 0, 3840, "/Users/samueltsui/Desktop")
 
 
