@@ -57,7 +57,7 @@ def processVideo(filepath, progressBar, outputFPS, rescaleRatio, sensitivityRati
     back_sub = cv2.createBackgroundSubtractorMOG2()
     
     if sensitivityRatio in range(1, 101):
-        motion_count_threshold = round(sensitivityRatio / 100 * (height * width))
+        motion_count_threshold = round((100-sensitivityRatio) / 100 * (height * width))
     else:
         raise ValueError("Sensitivity Value is out of range (1-100). Recommended 20.")
     print(height*width)
