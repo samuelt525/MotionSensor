@@ -31,6 +31,7 @@ class Controller:
         self.view.widget.xubSignal.connect(self.setxub)
         self.view.widget.ylbSignal.connect(self.setylb)
         self.view.widget.yubSignal.connect(self.setyub)
+        self.view.widget.sensitivtyThreshold.connect(self.setSensitivtyThreshold)
 
     def checkInputPath(self):
         path = ''
@@ -96,9 +97,11 @@ class Controller:
         self.model.setylb(ylb)
     def setyub(self, yub):
         self.model.setyub(yub)
+    def setSensitivtyThreshold(self, threshold):
+        self.model.setSensitivtyThreshold(threshold)
     def processFile(self):
         for filename in self.model.fileName[0]:
-            tracker.processVideo(filename, self.view.widget.progressBar, self.model.outputfps, self.model.rescaleRatio, self.model.xlb, self.model.xub, self.model.ylb, self.model.yub, self.model.outputPath)
+            tracker.processVideo(filename, self.view.widget.progressBar, self.model.outputfps, self.model.rescaleRatio, self.model.sensitivtyThreshold self.model.xlb, self.model.xub, self.model.ylb, self.model.yub, self.model.outputPath)
     def run(self):
         self.app.exec()
 

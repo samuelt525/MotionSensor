@@ -10,7 +10,7 @@ class Model:
         self.yub = 0 
         self.inputPath = ''
         self.outputPath = ''
-
+        self.sensitivtyThreshold = 0
     
     def setInputPath(self, inputPath):
         self.inputPath = inputPath
@@ -33,4 +33,6 @@ class Model:
         self.ylb = ylb
     def setyub(self, yub):
         self.yub = yub
-    
+    def setSensitivtyThreshold(self, threshold):
+        print(threshold)
+        self.sensitivtyThreshold = threshold

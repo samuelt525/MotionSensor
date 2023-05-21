@@ -126,6 +126,8 @@ class CustomWidget(QWidget):
     xubSignal = pyqtSignal(int)
     ylbSignal = pyqtSignal(int)
     yubSignal = pyqtSignal(int)
+    sensitivtyThreshold = pyqtSignal(int)
+    
     def closeEvent(self, event):
         self.closed.emit()
         super().closeEvent(event)
@@ -200,11 +202,12 @@ class CustomWidget(QWidget):
         
         self.algoSensitivityRow = QHBoxLayout()
         self.algorithmSensitivitySlider = QSlider(Qt.Orientation.Horizontal)
-        self.alogrithmSensitivityLabel = QLabel("Sensitivity:")
+        self.algorithmSensitivityLabel = QLabel("Sensitivity: 0")
+        self.algorithmSensitivitySlider.valueChanged.connect(self.sliderValueChanged)
         self.algorithmSensitivitySlider.setMaximum(100)
         self.algorithmSensitivitySlider.setMinimum(0)
         self.algorithmSensitivitySlider.setValue(90)
-        self.algoSensitivityRow.addWidget(self.alogrithmSensitivityLabel)
+        self.algoSensitivityRow.addWidget(self.algorithmSensitivityLabel)
         self.algoSensitivityRow.addWidget(self.algorithmSensitivitySlider)
         self.Form.addRow(self.algoSensitivityRow)
         
@@ -292,6 +295,10 @@ class CustomWidget(QWidget):
         self.submissionbutton = QPushButton('Submit')
         self.submissionbutton.clicked.connect(self.processVideo)
         self.Form.addRow(self.submissionbutton)
+    
+    def sliderValueChanged(self, value):
+        self.algorithmSensitivityLabel.setText(f"Slider Value: {value}")
+        self.sensitivtyThreshold.emit(value)
 
 
 
