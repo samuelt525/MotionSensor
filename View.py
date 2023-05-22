@@ -187,6 +187,9 @@ class CustomWidget(QWidget):
         self.ylbSignal.emit(self.userYLB.value())
     def setyub(self):
         self.yubSignal.emit(self.userYUB.value())
+    def sliderValueChanged(self, value):
+        self.algorithmSensitivityLabel.setText(f"Slider Value: {value}")
+        self.sensitivtyThreshold.emit(value)
 
     def initializeForm(self):
         filename = self.filename[0][0]
@@ -291,12 +294,6 @@ class CustomWidget(QWidget):
         self.submissionbutton = QPushButton('Submit')
         self.submissionbutton.clicked.connect(self.processVideo)
         self.Form.addRow(self.submissionbutton)
-    
-    def sliderValueChanged(self, value):
-        self.algorithmSensitivityLabel.setText(f"Slider Value: {value}")
-        self.sensitivtyThreshold.emit(value)
-
-
 
     @pyqtSlot(result=QSize)
     def getSize(self):

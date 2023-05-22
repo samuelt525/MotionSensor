@@ -100,7 +100,8 @@ class Controller:
     def setSensitivtyThreshold(self, threshold):
         self.model.setSensitivtyThreshold(threshold)
     def processFile(self):
-        for filename in self.model.fileName[0]:
+        for i, filename in enumerate(self.model.fileName[0]):
+            self.view.widget.progressLabel.setText(f"Processing {filename}  {i+1}/{len(self.model.fileName[0])}")
             tracker.processVideo(filename, self.view.widget.progressBar, self.model.outputfps, self.model.rescaleRatio, self.model.sensitivtyThreshold, self.model.xlb, self.model.xub, self.model.ylb, self.model.yub, self.model.outputPath)
         self.view.close()
     def run(self):
