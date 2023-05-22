@@ -117,7 +117,6 @@ class MainWindow(QMainWindow):
 class CustomWidget(QWidget):
     resized = pyqtSignal()
     valueChanged = pyqtSignal()
-    closed = pyqtSignal()
     selectFileSignal = pyqtSignal(list or int)
     processFileSignal = pyqtSignal()
     outputfpsSignal = pyqtSignal(str)
@@ -128,9 +127,6 @@ class CustomWidget(QWidget):
     yubSignal = pyqtSignal(int)
     sensitivtyThreshold = pyqtSignal(int)
     
-    def closeEvent(self, event):
-        self.closed.emit()
-        super().closeEvent(event)
     def __init__(self, mainWindowParent):
         super().__init__()
         self.mainWindowParent = mainWindowParent
@@ -346,7 +342,6 @@ class CustomWidget(QWidget):
         QApplication.processEvents()
         self.processFileSignal.emit()
 
-        self.close()
 
     def setInputPath(self, inputPath):
         self.inputPath = inputPath

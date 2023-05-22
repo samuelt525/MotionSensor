@@ -102,6 +102,7 @@ class Controller:
     def processFile(self):
         for filename in self.model.fileName[0]:
             tracker.processVideo(filename, self.view.widget.progressBar, self.model.outputfps, self.model.rescaleRatio, self.model.sensitivtyThreshold, self.model.xlb, self.model.xub, self.model.ylb, self.model.yub, self.model.outputPath)
+        self.view.close()
     def run(self):
         self.app.exec()
 
