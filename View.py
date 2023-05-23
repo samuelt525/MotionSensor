@@ -42,7 +42,7 @@ class MainWindow(QMainWindow):
         self.fileMenu.addAction(self.defaultVideoPath)
         self.defaultVideoPath.triggered.connect(self.DefaultInputPathDialog)
 
-        self.defaultOutputPath = QAction('Output Video Path')
+        self.defaultOutputPath = QAction('Default Output Video Path')
         self.fileMenu.addAction(self.defaultOutputPath)
         self.defaultOutputPath.triggered.connect(self.DefaultOutputPathDialog)
     def resizeLol(self, yuh):
