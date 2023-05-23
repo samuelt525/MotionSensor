@@ -5,10 +5,10 @@ block_cipher = None
 
 
 a = Analysis(
-    ['gui.py'],
+    ['Controller.py'],
     pathex=[],
     binaries=[],
-    datas=[('media.qml', '.')],
+    datas=[('media.qml', '.'), ('Logo.png', '.')],
     hiddenimports=[],
     hookspath=[],
     hooksconfig={},

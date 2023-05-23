@@ -153,7 +153,8 @@ class CustomWidget(QWidget):
         self.Form = QFormLayout()
 
         self.logo = QLabel()
-        pixmap = QPixmap('Logo.png')
+        logo = os.path.join(os.path.dirname(__file__), 'Logo.png')
+        pixmap = QPixmap(logo)
         pixmap = pixmap.scaled(500,160)
         self.logo.setPixmap(pixmap)
         self.Form.addRow(self.logo)
